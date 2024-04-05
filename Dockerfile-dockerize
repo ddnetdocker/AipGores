@@ -1,0 +1,86 @@
+# Docker image to build DDNet for Linux and run it in a container
+FROM debian:12 as builder
+
+ENV CARGO_NET_GIT_FETCH_WITH_CLI=true
+
+RUN apt-get update && apt-get install -y libmariadb-dev \
+        build-essential \
+        cargo cmake git \
+        glslang-tools \
+        google-mock \
+        libavcodec-extra \
+        libavdevice-dev \
+        libavfilter-dev \
+        libavformat-dev \
+        libavutil-dev \
+        libcurl4-openssl-dev \
+        libfreetype6-dev \
+        libglew-dev \
+        libnotify-dev \
+        libogg-dev \
+        libopus-dev \
+        libopusfile-dev \
+        libpng-dev \
+        libsdl2-dev \
+        libsqlite3-dev \
+        libssl-dev \
+        libvulkan-dev \
+        libwavpack-dev \
+        libx264-dev \
+        python3 \
+        rustc \
+        spirv-tools 
+
+WORKDIR /app
+
+COPY . .
+
+RUN mkdir build && cd build && \
+        cmake .. -DCLIENT=OFF -DMYSQL=ON -DCMAKE_BUILD_TYPE=Release && \
+        make -j$(nproc) DDNet-Server
+
+
+FROM debian:12 as release
+
+ENV CARGO_NET_GIT_FETCH_WITH_CLI=true
+
+RUN apt-get update && apt-get install -y libmariadb-dev \
+        build-essential \
+        cargo cmake git \
+        glslang-tools \
+        google-mock \
+        libavcodec-extra \
+        libavdevice-dev \
+        libavfilter-dev \
+        libavformat-dev \
+        libavutil-dev \
+        libcurl4-openssl-dev \
+        libfreetype6-dev \
+        libglew-dev \
+        libnotify-dev \
+        libogg-dev \
+        libopus-dev \
+        libopusfile-dev \
+        libpng-dev \
+        libsdl2-dev \
+        libsqlite3-dev \
+        libssl-dev \
+        libvulkan-dev \
+        libwavpack-dev \
+        libx264-dev \
+        python3 \
+        rustc \
+        spirv-tools 
+
+WORKDIR /ddnet
+
+COPY --from=builder /app/build/DDNet-Server /ddnet/DDNet-Server
+COPY --from=builder /app/build/data /ddnet/data
+COPY --from=builder /app/storage.cfg /ddnet/storage.cfg
+COPY --from=builder /app/docker-entrypoint.sh /ddnet/docker-entrypoint.sh
+
+RUN chmod -R 777 /ddnet
+
+EXPOSE 8303 8304
+
+ENTRYPOINT ["/ddnet/docker-entrypoint.sh"]
