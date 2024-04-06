@@ -1,0 +1,25 @@
+name: Build and Push Docker Images Both Repositories
+
+on:
+  # push:
+  #   branches:
+  #     - main
+  workflow_dispatch:
+
+jobs:
+  build-and-push-docker-images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          path: main
+
+      - name: Build DDNet-Server docker image with own Dockerfile (./main/Dockerfile-dockerize special for this repo)
+        run: cd main && docker build -t ddnet -f ./Dockerfile-dockerize .
+
+      - name: Login, Tag and push Docker images to Docker Hub
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker tag ddnet ${{ secrets.DOCKER_USERNAME }}/ddnet
+          docker push ${{ secrets.DOCKER_USERNAME }}/ddnet
