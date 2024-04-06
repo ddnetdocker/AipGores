@@ -540,8 +540,8 @@ bool CScoreWorker::SaveScore(IDbConnection *pSqlServer, const ISqlData *pGameDat
 			return true;
 		}
 		int NumFinished = pSqlServer->GetInt(1);
-		if(NumFinished == 0)
-		{
+		// if(NumFinished == 0)
+		// {
 			str_format(aBuf, sizeof(aBuf), "SELECT Points FROM %s_maps WHERE Map=?", pSqlServer->GetPrefix());
 			if(pSqlServer->PrepareStatement(aBuf, pError, ErrorSize))
 			{
@@ -565,7 +565,7 @@ bool CScoreWorker::SaveScore(IDbConnection *pSqlServer, const ISqlData *pGameDat
 					"You earned %d point%s for finishing this map!",
 					Points, Points == 1 ? "" : "s");
 			}
-		}
+		// }
 	}
 
 	// save score. Can't fail, because no UNIQUE/PRIMARY KEY constrain is defined.
