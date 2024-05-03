@@ -427,6 +427,8 @@ protected:
 #endif
 	void RenderMenubar(CUIRect Box, IClient::EClientState ClientState);
 	void RenderNews(CUIRect MainView);
+	static void ConchainBackgroundEntities(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData);
+	void UpdateBackgroundEntities();
 	static void ConchainUpdateMusicState(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData);
 	void UpdateMusicState();
 
@@ -506,17 +508,6 @@ protected:
 	static void ConchainFavoritesUpdate(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData);
 	static void ConchainCommunitiesUpdate(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData);
 	static void ConchainUiPageUpdate(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData);
-	struct SCommunityCache
-	{
-		SHA256_DIGEST m_InfoSha256 = SHA256_ZEROED;
-		int m_LastPage = 0;
-		unsigned m_SelectedCommunitiesHash;
-		std::vector<const CCommunity *> m_vpSelectedCommunities;
-		std::vector<const CCommunityCountry *> m_vpSelectableCountries;
-		std::vector<const CCommunityType *> m_vpSelectableTypes;
-		bool m_AnyRanksAvailable;
-	};
-	SCommunityCache m_CommunityCache;
 	void UpdateCommunityCache(bool Force);
 
 	// community icons
@@ -600,12 +591,8 @@ protected:
 
 	bool CheckHotKey(int Key) const;
 
-	class CMenuBackground *m_pBackground;
-
 public:
 	void RenderBackground();
-
-	void SetMenuBackground(class CMenuBackground *pBackground) { m_pBackground = pBackground; }
 
 	static CMenusKeyBinder m_Binder;
 
@@ -771,7 +758,7 @@ public:
 private:
 	static int GhostlistFetchCallback(const CFsFileInfo *pInfo, int IsDir, int StorageType, void *pUser);
 	void SetMenuPage(int NewPage);
-	void RefreshBrowserTab(int UiPage);
+	void RefreshBrowserTab(bool Force);
 
 	// found in menus_ingame.cpp
 	void RenderInGameNetwork(CUIRect MainView);

@@ -663,12 +663,6 @@ void CMenus::RenderMenubar(CUIRect Box, IClient::EClientState ClientState)
 		static CButtonContainer s_InternetButton;
 		if(DoButton_MenuTab(&s_InternetButton, FONT_ICON_EARTH_AMERICAS, ActivePage == PAGE_INTERNET, &Button, IGraphics::CORNER_T, &m_aAnimatorsBigPage[BIG_TAB_INTERNET]))
 		{
-			if(ServerBrowser()->GetCurrentType() != IServerBrowser::TYPE_INTERNET)
-			{
-				if(ServerBrowser()->GetCurrentType() == IServerBrowser::TYPE_LAN)
-					Client()->RequestDDNetInfo();
-				ServerBrowser()->Refresh(IServerBrowser::TYPE_INTERNET);
-			}
 			NewPage = PAGE_INTERNET;
 		}
 		GameClient()->m_Tooltips.DoToolTip(&s_InternetButton, &Button, Localize("Internet"));
@@ -677,8 +671,6 @@ void CMenus::RenderMenubar(CUIRect Box, IClient::EClientState ClientState)
 		static CButtonContainer s_LanButton;
 		if(DoButton_MenuTab(&s_LanButton, FONT_ICON_NETWORK_WIRED, ActivePage == PAGE_LAN, &Button, IGraphics::CORNER_T, &m_aAnimatorsBigPage[BIG_TAB_LAN]))
 		{
-			if(ServerBrowser()->GetCurrentType() != IServerBrowser::TYPE_LAN)
-				ServerBrowser()->Refresh(IServerBrowser::TYPE_LAN);
 			NewPage = PAGE_LAN;
 		}
 		GameClient()->m_Tooltips.DoToolTip(&s_LanButton, &Button, Localize("LAN"));
@@ -687,12 +679,6 @@ void CMenus::RenderMenubar(CUIRect Box, IClient::EClientState ClientState)
 		static CButtonContainer s_FavoritesButton;
 		if(DoButton_MenuTab(&s_FavoritesButton, FONT_ICON_STAR, ActivePage == PAGE_FAVORITES, &Button, IGraphics::CORNER_T, &m_aAnimatorsBigPage[BIG_TAB_FAVORITES]))
 		{
-			if(ServerBrowser()->GetCurrentType() != IServerBrowser::TYPE_FAVORITES)
-			{
-				if(ServerBrowser()->GetCurrentType() == IServerBrowser::TYPE_LAN)
-					Client()->RequestDDNetInfo();
-				ServerBrowser()->Refresh(IServerBrowser::TYPE_FAVORITES);
-			}
 			NewPage = PAGE_FAVORITES;
 		}
 		GameClient()->m_Tooltips.DoToolTip(&s_FavoritesButton, &Button, Localize("Favorites"));
@@ -710,13 +696,6 @@ void CMenus::RenderMenubar(CUIRect Box, IClient::EClientState ClientState)
 			const int Page = PAGE_FAVORITE_COMMUNITY_1 + FavoriteCommunityIndex;
 			if(DoButton_MenuTab(&s_aFavoriteCommunityButtons[FavoriteCommunityIndex], FONT_ICON_ELLIPSIS, ActivePage == Page, &Button, IGraphics::CORNER_T, &m_aAnimatorsBigPage[BIT_TAB_FAVORITE_COMMUNITY_1 + FavoriteCommunityIndex], nullptr, nullptr, nullptr, 10.0f, FindCommunityIcon(pCommunity->Id())))
 			{
-				const int BrowserType = IServerBrowser::TYPE_FAVORITE_COMMUNITY_1 + FavoriteCommunityIndex;
-				if(ServerBrowser()->GetCurrentType() != BrowserType)
-				{
-					if(ServerBrowser()->GetCurrentType() == IServerBrowser::TYPE_LAN)
-						Client()->RequestDDNetInfo();
-					ServerBrowser()->Refresh(BrowserType);
-				}
 				NewPage = Page;
 			}
 			GameClient()->m_Tooltips.DoToolTip(&s_aFavoriteCommunityButtons[FavoriteCommunityIndex], &Button, pCommunity->Name());
@@ -800,7 +779,7 @@ void CMenus::RenderLoading(const char *pCaption, const char *pContent, int Incre
 
 	Ui()->MapScreen();
 
-	if(!RenderMenuBackgroundMap || !m_pBackground->Render())
+	if(!RenderMenuBackgroundMap || !GameClient()->m_MenuBackground.Render())
 	{
 		RenderBackground();
 	}
@@ -832,7 +811,7 @@ void CMenus::RenderLoading(const char *pCaption, const char *pContent, int Incre
 
 void CMenus::RenderNews(CUIRect MainView)
 {
-	m_pBackground->ChangePosition(CMenuBackground::POS_NEWS);
+	GameClient()->m_MenuBackground.ChangePosition(CMenuBackground::POS_NEWS);
 
 	g_Config.m_UiUnreadNews = false;
 
@@ -903,6 +882,7 @@ void CMenus::OnInit()
 
 	Console()->Chain("snd_enable", ConchainUpdateMusicState, this);
 	Console()->Chain("snd_enable_music", ConchainUpdateMusicState, this);
+	Console()->Chain("cl_background_entities", ConchainBackgroundEntities, this);
 
 	Console()->Chain("cl_assets_entities", ConchainAssetsEntities, this);
 	Console()->Chain("cl_asset_game", ConchainAssetGame, this);
@@ -936,6 +916,22 @@ void CMenus::OnConsoleInit()
 	ConfigManager()->RegisterCallback(CMenus::ConfigSaveCallback, this);
 	Console()->Register("add_favorite_skin", "s[skin_name]", CFGFLAG_CLIENT, Con_AddFavoriteSkin, this, "Add a skin as a favorite");
 	Console()->Register("remove_favorite_skin", "s[skin_name]", CFGFLAG_CLIENT, Con_RemFavoriteSkin, this, "Remove a skin from the favorites");
+}
+
+void CMenus::ConchainBackgroundEntities(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData)
+{
+	pfnCallback(pResult, pCallbackUserData);
+	if(pResult->NumArguments())
+	{
+		CMenus *pSelf = (CMenus *)pUserData;
+		pSelf->UpdateBackgroundEntities();
+	}
+}
+
+void CMenus::UpdateBackgroundEntities()
+{
+	if(str_comp(g_Config.m_ClBackgroundEntities, m_pClient->m_Background.MapName()) != 0)
+		m_pClient->m_Background.LoadBackground();
 }
 
 void CMenus::ConchainUpdateMusicState(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData)
@@ -1019,7 +1015,7 @@ void CMenus::Render()
 	static int s_Frame = 0;
 	if(s_Frame == 0)
 	{
-		RefreshBrowserTab(g_Config.m_UiPage);
+		RefreshBrowserTab(true);
 		s_Frame++;
 	}
 	else if(s_Frame == 1)
@@ -1073,7 +1069,7 @@ void CMenus::Render()
 	}
 	else
 	{
-		if(!m_pBackground->Render())
+		if(!GameClient()->m_MenuBackground.Render())
 		{
 			RenderBackground();
 		}
@@ -1437,7 +1433,9 @@ void CMenus::RenderPopupFullscreen(CUIRect Screen)
 		static CButtonContainer s_ButtonTryAgain;
 		if(DoButton_Menu(&s_ButtonTryAgain, Localize("Try again"), 0, &TryAgain) || Ui()->ConsumeHotkey(CUi::HOTKEY_ENTER))
 		{
-			Client()->Connect(g_Config.m_UiServerAddress, g_Config.m_Password);
+			char aAddr[NETADDR_MAXSTRSIZE];
+			net_addr_str(&Client()->ServerAddress(), aAddr, sizeof(aAddr), true);
+			Client()->Connect(aAddr, g_Config.m_Password);
 		}
 
 		Box.HSplitBottom(60.f, &Box, &Part);
@@ -1834,7 +1832,7 @@ void CMenus::RenderPopupConnecting(CUIRect Screen)
 	{
 		Client()->Disconnect();
 		Ui()->SetActiveItem(nullptr);
-		RefreshBrowserTab(g_Config.m_UiPage);
+		RefreshBrowserTab(true);
 	}
 }
 
@@ -1953,7 +1951,7 @@ void CMenus::RenderPopupLoading(CUIRect Screen)
 	{
 		Client()->Disconnect();
 		Ui()->SetActiveItem(nullptr);
-		RefreshBrowserTab(g_Config.m_UiPage);
+		RefreshBrowserTab(true);
 	}
 }
 
@@ -1981,7 +1979,7 @@ void CMenus::PopupConfirmDemoReplaceVideo()
 
 void CMenus::RenderThemeSelection(CUIRect MainView)
 {
-	const std::vector<CTheme> &vThemes = m_pBackground->GetThemes();
+	const std::vector<CTheme> &vThemes = GameClient()->m_MenuBackground.GetThemes();
 
 	int SelectedTheme = -1;
 	for(int i = 0; i < (int)vThemes.size(); i++)
@@ -2047,7 +2045,7 @@ void CMenus::RenderThemeSelection(CUIRect MainView)
 	{
 		const CTheme &Theme = vThemes[SelectedTheme];
 		str_copy(g_Config.m_ClMenuMap, Theme.m_Name.c_str());
-		m_pBackground->LoadMenuBackground(Theme.m_HasDay, Theme.m_HasNight);
+		GameClient()->m_MenuBackground.LoadMenuBackground(Theme.m_HasDay, Theme.m_HasNight);
 	}
 }
 
@@ -2180,10 +2178,15 @@ void CMenus::OnRender()
 	if(!IsActive())
 	{
 		if(Ui()->ConsumeHotkey(CUi::HOTKEY_ESCAPE))
+		{
 			SetActive(true);
-		Ui()->FinishCheck();
-		Ui()->ClearHotkeys();
-		return;
+		}
+		else if(Client()->State() != IClient::STATE_DEMOPLAYBACK)
+		{
+			Ui()->FinishCheck();
+			Ui()->ClearHotkeys();
+			return;
+		}
 	}
 
 	UpdateColors();
@@ -2191,7 +2194,11 @@ void CMenus::OnRender()
 	Ui()->Update();
 
 	Render();
-	RenderTools()->RenderCursor(Ui()->MousePos(), 24.0f);
+
+	if(IsActive())
+	{
+		RenderTools()->RenderCursor(Ui()->MousePos(), 24.0f);
+	}
 
 	// render debug information
 	if(g_Config.m_Debug)
@@ -2318,7 +2325,7 @@ int CMenus::MenuImageScan(const char *pName, int IsDir, int DirType, void *pUser
 	str_format(aPath, sizeof(aPath), "menuimages/%s", pName);
 
 	CImageInfo Info;
-	if(!pSelf->Graphics()->LoadPNG(&Info, aPath, DirType))
+	if(!pSelf->Graphics()->LoadPng(Info, aPath, DirType))
 	{
 		char aError[IO_MAX_PATH_LENGTH + 64];
 		str_format(aError, sizeof(aError), "Failed to load menu image from '%s'", aPath);
@@ -2339,7 +2346,7 @@ int CMenus::MenuImageScan(const char *pName, int IsDir, int DirType, void *pUser
 	// create gray scale version
 	unsigned char *pData = static_cast<unsigned char *>(Info.m_pData);
 	const size_t Step = Info.PixelSize();
-	for(int i = 0; i < Info.m_Width * Info.m_Height; i++)
+	for(size_t i = 0; i < Info.m_Width * Info.m_Height; i++)
 	{
 		int v = (pData[i * Step] + pData[i * Step + 1] + pData[i * Step + 2]) / 3;
 		pData[i * Step] = v;
@@ -2366,30 +2373,63 @@ const CMenus::CMenuImage *CMenus::FindMenuImage(const char *pName)
 
 void CMenus::SetMenuPage(int NewPage)
 {
+	const int OldPage = m_MenuPage;
 	m_MenuPage = NewPage;
 	if(NewPage >= PAGE_INTERNET && NewPage <= PAGE_FAVORITE_COMMUNITY_5)
+	{
 		g_Config.m_UiPage = NewPage;
+		if(!m_ShowStart && OldPage != NewPage)
+		{
+			RefreshBrowserTab(false);
+		}
+	}
 }
 
-void CMenus::RefreshBrowserTab(int UiPage)
+void CMenus::RefreshBrowserTab(bool Force)
 {
-	if(UiPage == PAGE_INTERNET)
+	if(g_Config.m_UiPage == PAGE_INTERNET)
 	{
-		Client()->RequestDDNetInfo();
-		ServerBrowser()->Refresh(IServerBrowser::TYPE_INTERNET);
+		if(Force || ServerBrowser()->GetCurrentType() != IServerBrowser::TYPE_INTERNET)
+		{
+			if(Force || ServerBrowser()->GetCurrentType() == IServerBrowser::TYPE_LAN)
+			{
+				Client()->RequestDDNetInfo();
+			}
+			ServerBrowser()->Refresh(IServerBrowser::TYPE_INTERNET);
+			UpdateCommunityCache(true);
+		}
 	}
-	else if(UiPage == PAGE_LAN)
+	else if(g_Config.m_UiPage == PAGE_LAN)
 	{
-		ServerBrowser()->Refresh(IServerBrowser::TYPE_LAN);
+		if(Force || ServerBrowser()->GetCurrentType() != IServerBrowser::TYPE_LAN)
+		{
+			ServerBrowser()->Refresh(IServerBrowser::TYPE_LAN);
+			UpdateCommunityCache(true);
+		}
 	}
-	else if(UiPage == PAGE_FAVORITES)
+	else if(g_Config.m_UiPage == PAGE_FAVORITES)
 	{
-		Client()->RequestDDNetInfo();
-		ServerBrowser()->Refresh(IServerBrowser::TYPE_FAVORITES);
+		if(Force || ServerBrowser()->GetCurrentType() != IServerBrowser::TYPE_FAVORITES)
+		{
+			if(Force || ServerBrowser()->GetCurrentType() == IServerBrowser::TYPE_LAN)
+			{
+				Client()->RequestDDNetInfo();
+			}
+			ServerBrowser()->Refresh(IServerBrowser::TYPE_FAVORITES);
+			UpdateCommunityCache(true);
+		}
 	}
-	else if(UiPage >= PAGE_FAVORITE_COMMUNITY_1 && UiPage <= PAGE_FAVORITE_COMMUNITY_5)
+	else if(g_Config.m_UiPage >= PAGE_FAVORITE_COMMUNITY_1 && g_Config.m_UiPage <= PAGE_FAVORITE_COMMUNITY_5)
 	{
-		Client()->RequestDDNetInfo();
-		ServerBrowser()->Refresh(UiPage - PAGE_FAVORITE_COMMUNITY_1 + IServerBrowser::TYPE_FAVORITE_COMMUNITY_1);
+		const int BrowserType = g_Config.m_UiPage - PAGE_FAVORITE_COMMUNITY_1 + IServerBrowser::TYPE_FAVORITE_COMMUNITY_1;
+		if(Force || ServerBrowser()->GetCurrentType() != BrowserType)
+		{
+			if(Force || ServerBrowser()->GetCurrentType() == IServerBrowser::TYPE_LAN)
+			{
+				Client()->RequestDDNetInfo();
+			}
+			ServerBrowser()->Refresh(BrowserType);
+			UpdateCommunityCache(true);
+		}
 	}
 }

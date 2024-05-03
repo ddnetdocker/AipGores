@@ -312,9 +312,9 @@ static bool ConvertToRGBA(uint8_t *pDest, const CImageInfo &SrcImage)
 	{
 		const size_t SrcChannelCount = CImageInfo::PixelSize(SrcImage.m_Format);
 		const size_t DstChannelCount = CImageInfo::PixelSize(CImageInfo::FORMAT_RGBA);
-		for(size_t Y = 0; Y < (size_t)SrcImage.m_Height; ++Y)
+		for(size_t Y = 0; Y < SrcImage.m_Height; ++Y)
 		{
-			for(size_t X = 0; X < (size_t)SrcImage.m_Width; ++X)
+			for(size_t X = 0; X < SrcImage.m_Width; ++X)
 			{
 				size_t ImgOffsetSrc = (Y * SrcImage.m_Width * SrcChannelCount) + (X * SrcChannelCount);
 				size_t ImgOffsetDest = (Y * SrcImage.m_Width * DstChannelCount) + (X * DstChannelCount);
@@ -349,7 +349,7 @@ int CGraphics_Threaded::LoadTextureRawSub(CTextureHandle TextureId, int x, int y
 	Cmd.m_Height = Image.m_Height;
 	Cmd.m_Format = CCommandBuffer::TEXFORMAT_RGBA;
 
-	uint8_t *pTmpData = static_cast<uint8_t *>(malloc((size_t)Image.m_Width * Image.m_Height * CImageInfo::PixelSize(CImageInfo::FORMAT_RGBA)));
+	uint8_t *pTmpData = static_cast<uint8_t *>(malloc(Image.m_Width * Image.m_Height * CImageInfo::PixelSize(CImageInfo::FORMAT_RGBA)));
 	ConvertToRGBA(pTmpData, Image);
 	Cmd.m_pData = pTmpData;
 	AddCmd(Cmd);
@@ -460,7 +460,7 @@ IGraphics::CTextureHandle CGraphics_Threaded::LoadTextureRaw(const CImageInfo &I
 	CCommandBuffer::SCommand_Texture_Create Cmd = LoadTextureCreateCommand(TextureHandle.Id(), Image.m_Width, Image.m_Height, Flags);
 
 	// Copy texture data and convert if necessary
-	uint8_t *pTmpData = static_cast<uint8_t *>(malloc((size_t)Image.m_Width * Image.m_Height * CImageInfo::PixelSize(CImageInfo::FORMAT_RGBA)));
+	uint8_t *pTmpData = static_cast<uint8_t *>(malloc(Image.m_Width * Image.m_Height * CImageInfo::PixelSize(CImageInfo::FORMAT_RGBA)));
 	if(!ConvertToRGBA(pTmpData, Image))
 	{
 		dbg_msg("graphics", "converted image '%s' to RGBA, consider making its file format RGBA", pTexName ? pTexName : "(no name)");
@@ -499,10 +499,10 @@ IGraphics::CTextureHandle CGraphics_Threaded::LoadTexture(const char *pFilename,
 {
 	dbg_assert(pFilename[0] != '\0', "Cannot load texture from file with empty filename"); // would cause Valgrind to crash otherwise
 
-	CImageInfo Img;
-	if(LoadPNG(&Img, pFilename, StorageType))
+	CImageInfo Image;
+	if(LoadPng(Image, pFilename, StorageType))
 	{
-		CTextureHandle Id = LoadTextureRawMove(Img, Flags, pFilename);
+		CTextureHandle Id = LoadTextureRawMove(Image, Flags, pFilename);
 		if(Id.IsValid())
 		{
 			if(g_Config.m_Debug)
@@ -571,7 +571,7 @@ bool CGraphics_Threaded::UpdateTextTexture(CTextureHandle TextureId, int x, int 
 	return true;
 }
 
-bool CGraphics_Threaded::LoadPNG(CImageInfo *pImg, const char *pFilename, int StorageType)
+bool CGraphics_Threaded::LoadPng(CImageInfo &Image, const char *pFilename, int StorageType)
 {
 	char aCompleteFilename[IO_MAX_PATH_LENGTH];
 	IOHANDLE File = m_pStorage->OpenFile(pFilename, IOFLAG_READ, StorageType, aCompleteFilename, sizeof(aCompleteFilename));
@@ -598,19 +598,19 @@ bool CGraphics_Threaded::LoadPNG(CImageInfo *pImg, const char *pFilename, int St
 		uint8_t *pImgBuffer = NULL;
 		EImageFormat ImageFormat;
 		int PngliteIncompatible;
-		if(::LoadPNG(ImageByteBuffer, pFilename, PngliteIncompatible, pImg->m_Width, pImg->m_Height, pImgBuffer, ImageFormat))
+		if(::LoadPng(ImageByteBuffer, pFilename, PngliteIncompatible, Image.m_Width, Image.m_Height, pImgBuffer, ImageFormat))
 		{
 			if(ImageFormat == IMAGE_FORMAT_RGB)
-				pImg->m_Format = CImageInfo::FORMAT_RGB;
+				Image.m_Format = CImageInfo::FORMAT_RGB;
 			else if(ImageFormat == IMAGE_FORMAT_RGBA)
-				pImg->m_Format = CImageInfo::FORMAT_RGBA;
+				Image.m_Format = CImageInfo::FORMAT_RGBA;
 			else
 			{
 				free(pImgBuffer);
 				log_error("game/png", "image had unsupported image format. filename='%s' format='%d'", pFilename, (int)ImageFormat);
 				return false;
 			}
-			pImg->m_pData = pImgBuffer;
+			Image.m_pData = pImgBuffer;
 
 			if(m_WarnPngliteIncompatibleImages && PngliteIncompatible != 0)
 			{
@@ -775,7 +775,7 @@ class CScreenshotSaveJob : public IJob
 			TImageByteBuffer ByteBuffer;
 			SImageByteBuffer ImageByteBuffer(&ByteBuffer);
 
-			if(SavePNG(IMAGE_FORMAT_RGBA, m_pData, ImageByteBuffer, m_Width, m_Height))
+			if(SavePng(IMAGE_FORMAT_RGBA, m_pData, ImageByteBuffer, m_Width, m_Height))
 				io_write(File, &ByteBuffer.front(), ByteBuffer.size());
 			io_close(File);
 
@@ -2664,15 +2664,15 @@ void CGraphics_Threaded::Move(int x, int y)
 		PropChangedListener();
 }
 
-void CGraphics_Threaded::Resize(int w, int h, int RefreshRate)
+bool CGraphics_Threaded::Resize(int w, int h, int RefreshRate)
 {
 #if defined(CONF_VIDEORECORDER)
 	if(IVideo::Current() && IVideo::Current()->IsRecording())
-		return;
+		return false;
 #endif
 
 	if(WindowWidth() == w && WindowHeight() == h && RefreshRate == m_ScreenRefreshRate)
-		return;
+		return false;
 
 	// if the size is changed manually, only set the window resize, a window size changed event is triggered anyway
 	if(m_pBackend->ResizeWindow(w, h, RefreshRate))
@@ -2680,7 +2680,20 @@ void CGraphics_Threaded::Resize(int w, int h, int RefreshRate)
 		CVideoMode CurMode;
 		m_pBackend->GetCurrentVideoMode(CurMode, m_ScreenHiDPIScale, g_Config.m_GfxDesktopWidth, g_Config.m_GfxDesktopHeight, g_Config.m_GfxScreen);
 		GotResized(w, h, RefreshRate);
+		return true;
 	}
+	return false;
+}
+
+void CGraphics_Threaded::ResizeToScreen()
+{
+	if(Resize(g_Config.m_GfxScreenWidth, g_Config.m_GfxScreenHeight, g_Config.m_GfxScreenRefreshRate))
+		return;
+
+	// Revert config variables if the change was not accepted
+	g_Config.m_GfxScreenWidth = ScreenWidth();
+	g_Config.m_GfxScreenHeight = ScreenHeight();
+	g_Config.m_GfxScreenRefreshRate = m_ScreenRefreshRate;
 }
 
 void CGraphics_Threaded::GotResized(int w, int h, int RefreshRate)

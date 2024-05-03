@@ -866,7 +866,7 @@ bool CEditor::CallbackSaveImage(const char *pFileName, int StorageType, void *pU
 
 	TImageByteBuffer ByteBuffer;
 	SImageByteBuffer ImageByteBuffer(&ByteBuffer);
-	if(SavePNG(OutputFormat, pImg->m_pData, ImageByteBuffer, pImg->m_Width, pImg->m_Height))
+	if(SavePng(OutputFormat, pImg->m_pData, ImageByteBuffer, pImg->m_Width, pImg->m_Height))
 	{
 		IOHANDLE File = pEditor->Storage()->OpenFile(pFileName, IOFLAG_WRITE, StorageType);
 		if(File)
@@ -1379,12 +1379,17 @@ void CEditor::DoToolbarSounds(CUIRect ToolBar)
 		if(pSelectedSound->m_SoundId != m_ToolbarPreviewSound && m_ToolbarPreviewSound >= 0 && Sound()->IsPlaying(m_ToolbarPreviewSound))
 			Sound()->Stop(m_ToolbarPreviewSound);
 		m_ToolbarPreviewSound = pSelectedSound->m_SoundId;
+	}
+	else
+	{
+		m_ToolbarPreviewSound = -1;
+	}
 
+	if(m_ToolbarPreviewSound >= 0)
+	{
 		static int s_PlayPauseButton, s_StopButton, s_SeekBar = 0;
 		DoAudioPreview(ToolBarBottom, &s_PlayPauseButton, &s_StopButton, &s_SeekBar, m_ToolbarPreviewSound);
 	}
-	else
-		m_ToolbarPreviewSound = -1;
 }
 
 static void Rotate(const CPoint *pCenter, CPoint *pPoint, float Rotation)
@@ -4361,7 +4366,7 @@ bool CEditor::ReplaceImage(const char *pFileName, int StorageType, bool CheckDup
 	}
 
 	CEditorImage ImgInfo(this);
-	if(!Graphics()->LoadPNG(&ImgInfo, pFileName, StorageType))
+	if(!Graphics()->LoadPng(ImgInfo, pFileName, StorageType))
 	{
 		ShowFileDialogError("Failed to load image from file '%s'.", pFileName);
 		return false;
@@ -4424,7 +4429,7 @@ bool CEditor::AddImage(const char *pFileName, int StorageType, void *pUser)
 	}
 
 	CEditorImage ImgInfo(pEditor);
-	if(!pEditor->Graphics()->LoadPNG(&ImgInfo, pFileName, StorageType))
+	if(!pEditor->Graphics()->LoadPng(ImgInfo, pFileName, StorageType))
 	{
 		pEditor->ShowFileDialogError("Failed to load image from file '%s'.", pFileName);
 		return false;
@@ -5139,7 +5144,7 @@ void CEditor::RenderFileDialog()
 			{
 				char aBuffer[IO_MAX_PATH_LENGTH];
 				str_format(aBuffer, sizeof(aBuffer), "%s/%s", m_pFileDialogPath, m_vpFilteredFileList[m_FilesSelectedIndex]->m_aFilename);
-				if(Graphics()->LoadPNG(&m_FilePreviewImageInfo, aBuffer, m_vpFilteredFileList[m_FilesSelectedIndex]->m_StorageType))
+				if(Graphics()->LoadPng(m_FilePreviewImageInfo, aBuffer, m_vpFilteredFileList[m_FilesSelectedIndex]->m_StorageType))
 				{
 					Graphics()->UnloadTexture(&m_FilePreviewImage);
 					m_FilePreviewImage = Graphics()->LoadTextureRawMove(m_FilePreviewImageInfo, 0, aBuffer);
@@ -8705,11 +8710,10 @@ void CEditor::OnClose()
 
 void CEditor::OnDialogClose()
 {
-	if(m_FilePreviewSound >= 0)
-	{
-		Sound()->UnloadSample(m_FilePreviewSound);
-		m_FilePreviewSound = -1;
-	}
+	Graphics()->UnloadTexture(&m_FilePreviewImage);
+	Sound()->UnloadSample(m_FilePreviewSound);
+	m_FilePreviewSound = -1;
+	m_FilePreviewState = PREVIEW_UNLOADED;
 }
 
 void CEditor::LoadCurrentMap()

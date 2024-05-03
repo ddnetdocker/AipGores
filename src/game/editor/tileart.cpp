@@ -66,9 +66,9 @@ static std::vector<ColorRGBA> GetUniqueColors(const CImageInfo &Image)
 {
 	std::set<ColorRGBA> ColorSet;
 	std::vector<ColorRGBA> vUniqueColors;
-	for(int x = 0; x < Image.m_Width; x++)
+	for(size_t x = 0; x < Image.m_Width; x++)
 	{
-		for(int y = 0; y < Image.m_Height; y++)
+		for(size_t y = 0; y < Image.m_Height; y++)
 		{
 			ColorRGBA Color = GetPixelColor(Image, x, y);
 			if(Color.a > 0 && ColorSet.insert(Color).second)
@@ -238,7 +238,7 @@ bool CEditor::CallbackAddTileart(const char *pFilepath, int StorageType, void *p
 {
 	CEditor *pEditor = (CEditor *)pUser;
 
-	if(!pEditor->Graphics()->LoadPNG(&pEditor->m_TileartImageInfo, pFilepath, StorageType))
+	if(!pEditor->Graphics()->LoadPng(pEditor->m_TileartImageInfo, pFilepath, StorageType))
 	{
 		pEditor->ShowFileDialogError("Failed to load image from file '%s'.", pFilepath);
 		return false;

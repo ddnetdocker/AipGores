@@ -38,6 +38,7 @@ public:
 	void TickDeferred() override;
 	void TickPaused() override;
 	void Snap(int SnappingClient) override;
+	void PostSnap() override;
 	void SwapClients(int Client1, int Client2) override;
 
 	bool CanSnapCharacter(int SnappingClient);
@@ -144,6 +145,8 @@ private:
 	int m_Health;
 	int m_Armor;
 
+	int m_TriggeredEvents7;
+
 	// the player core for the physics
 	CCharacterCore m_Core;
 	CGameTeams *m_pTeams = nullptr;
@@ -185,6 +188,7 @@ public:
 	bool UnFreeze();
 	void GiveAllWeapons();
 	void ResetPickups();
+	void ResetJumps();
 	int m_DDRaceState;
 	int Team();
 	bool CanCollide(int ClientId);
