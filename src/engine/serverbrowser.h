@@ -121,7 +121,6 @@ public:
 
 	static int EstimateLatency(int Loc1, int Loc2);
 	static bool ParseLocation(int *pResult, const char *pString);
-	void InfoToString(char *pBuffer, int BufferSize) const;
 };
 
 class CCommunityCountryServer
@@ -296,6 +295,18 @@ public:
 		NUM_TYPES,
 	};
 
+	class CServerEntry
+	{
+	public:
+		int64_t m_RequestTime;
+		bool m_RequestIgnoreInfo;
+		int m_GotInfo;
+		CServerInfo m_Info;
+
+		CServerEntry *m_pPrevReq; // request list
+		CServerEntry *m_pNextReq;
+	};
+
 	static constexpr const char *COMMUNITY_DDNET = "ddnet";
 	static constexpr const char *COMMUNITY_NONE = "none";
 	/**
@@ -342,6 +353,7 @@ public:
 	virtual const IFilterList &TypesFilter() const = 0;
 	virtual void CleanFilters() = 0;
 
+	virtual CServerEntry *Find(const NETADDR &Addr) = 0;
 	virtual int GetCurrentType() = 0;
 	virtual const char *GetTutorialServer() = 0;
 };

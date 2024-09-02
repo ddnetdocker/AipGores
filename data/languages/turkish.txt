@@ -14,6 +14,9 @@
 #   eghwand          2024-03-03 13:24:20
 #   Gokturk          2024-04-23 01:56:10
 #   Gokturk          2024-04-24 03:01:50
+#   Gokturk          2024-06-09 12:00:50
+#   Gokturk          2024-07-17 02:24:00
+#   Gokturk          2024-08-29 23:31:00
 ##### /authors #####
 
 ##### translated strings #####
@@ -87,8 +90,8 @@ Client
 Connecting to
 == Bağlanılıyor
 
-Connection Problems...
-== Bağlantı Hataları...
+Connection Problems…
+== Bağlantı Hataları…
 
 Console
 == Konsol
@@ -241,7 +244,7 @@ Mute when not active
 == Aktif değilken sessizleştir
 
 Name
-== Sunucu ismi
+== İsim
 
 Next weapon
 == Sonraki silah
@@ -284,9 +287,6 @@ Play background music
 
 Player
 == Oyuncu
-
-Player options
-== Oyuncu ayarları
 
 Players
 == Oyuncular
@@ -504,9 +504,6 @@ Your skin
 Reset to defaults
 == Varsayılanlara getir
 
-Round
-== Yuvarlak
-
 Lht.
 == Parlaklık
 
@@ -624,7 +621,7 @@ DDNet %s is out!
 Downloading %s:
 == İndiriliyor %s:
 
-Update failed! Check log...
+Update failed! Check log…
 == Güncelleme sırasında hata oluştu!
 
 DDNet Client updated!
@@ -665,9 +662,6 @@ Connecting dummy
 
 Connect Dummy
 == Dummy Katıl
-
-Reload
-== Yenile
 
 Deactivate
 == Devre dışı bırak
@@ -807,9 +801,6 @@ DDNet
 DDNet Client needs to be restarted to complete update!
 == Güncellemenin tamamlanabilmesi için oyunun yeniden başlatılması lazım!
 
-Use DDRace Scoreboard
-== DDRace skor tablosunu kulan
-
 Show score
 == Skoru göster
 
@@ -903,8 +894,8 @@ Show tiles layers from BG map
 DDNet %s is available:
 == DDNet %s yayınlandı:
 
-Updating...
-== Güncelleniyor...
+Updating…
+== Güncelleniyor…
 
 No updates available
 == Güncelleme mevcut değil
@@ -1045,10 +1036,10 @@ Warning
 == Uyarı
 
 Quitting. Please wait…
-== Çıkılıyor. Lütfen bekleyin...
+== Çıkılıyor. Lütfen bekleyin…
 
 Restarting. Please wait…
-== Yeniden başlatılıyor. Lütfen bekleyin...
+== Yeniden başlatılıyor. Lütfen bekleyin…
 
 Debug mode enabled. Press Ctrl+Shift+D to disable debug mode.
 == Hata ayıklama modu etkinleştirildi. Devre dışı bırakmak için Ctrl+Shift+D tuşlarına basın.
@@ -1071,8 +1062,8 @@ Team %d
 Uploading map data to GPU
 == Harita verisi GPU'ya yükleniyor
 
-Trying to determine UDP connectivity...
-== UDP bağlantısı belirlenmeye çalışılıyor...
+Trying to determine UDP connectivity…
+== UDP bağlantısı belirlenmeye çalışılıyor…
 
 UDP seems to be filtered.
 == UDP filtrelenmiş görünüyor.
@@ -1467,9 +1458,6 @@ Show health, shields and ammo
 DDRace HUD
 == DDRace arayüzü
 
-Show client IDs in scoreboard
-== Skor tablosunda ki istemci ID'lerini göster
-
 Show DDRace HUD
 == DDRace arayüzünü göster
 
@@ -1854,3 +1842,87 @@ Always show other players' hook collision lines
 [Demo details]
 map not included
 == harita dahil edilmemiş
+
+%d/%d KiB (%.1f KiB/s)
+== %d/%d KiB (%.1f KiB/s)
+
+Tee
+== Tee
+
+Show only chat messages from team members
+== Sadece takım üyelerinin mesajlarını göster
+
+[Spectating]
+Following %s
+== İzleniyor %s
+
+Example of usage
+== Kullanım örneği
+
+Round %d/%d
+== Yuvarlak %d/%d
+
+[Spectators]
+%d others…
+== %d diğerleri…
+
+[Team and size]
+%d\n(%d/%d)
+== %d\n(%d/%d)
+
+Team %d (%d/%d)
+== Takım %d (%d/%d)
+
+https://wiki.ddnet.org/wiki/Mapping
+== https://wiki.ddnet.org/wiki/Mapping/tr
+
+Could not resolve connect address '%s'. See local console for details.
+== '%s' Bağlantı adresi çözümlenemedi. Detaylar için yerel konsola bakın
+
+Connect address error
+== Bağlantı adresi hatası
+
+Could not connect dummy
+== Dummy bağlanamadı
+
+Dummy is not allowed on this server
+== Bu sunucuda dummy izin verilmiyor
+
+Please wait…
+== Lütfen bekleyin…
+
+Show client IDs (scoreboard, chat, spectator)
+== İstemci ID'sini göster (skor tablosu, sohbet, izleyici)
+
+Normal:
+== Normal:
+
+Team:
+== Takım:
+
+Dummy settings
+== Dummy ayarları
+
+Toggle to edit your dummy settings
+== Dummy ayarlarını düzenlemek için açın 
+
+Randomize
+== Rastgele
+
+Are you sure that you want to delete '%s'?
+== '%s' bunu silmek istediğine emin misin?
+
+Delete skin
+== Skini sil
+
+Basic
+== Basit
+
+Custom
+== Özel
+
+Unable to delete skin
+== Skin silinemiyor
+
+Customize
+== Özelleştir

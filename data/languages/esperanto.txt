@@ -27,8 +27,8 @@ Game paused
 Warmup
 == Trejnado
 
-Connection Problems...
-== Konekta problemoj...
+Connection Problems…
+== Konekta problemoj…
 
 Please balance teams!
 == Bonvolu ekvilibrigi teamojn!
@@ -300,9 +300,6 @@ Kill
 Pause
 == Paŭzi
 
-Player options
-== Ludantaj agordoj
-
 Player
 == Ludanto
 
@@ -456,8 +453,8 @@ DDNet %s is available:
 Update now
 == Ĝisdatigi nun
 
-Updating...
-== Ĝisdatiĝas...
+Updating…
+== Ĝisdatiĝas…
 
 Check now
 == Kontroli nun
@@ -565,7 +562,16 @@ Could not initialize the given graphics backend, reverting to the default backen
 Could not initialize the given graphics backend, this is probably because you didn't install the driver of the integrated graphics card.
 == 
 
+Could not resolve connect address '%s'. See local console for details.
+== 
+
+Connect address error
+== 
+
 Could not save downloaded map. Try manually deleting this file: %s
+== 
+
+Could not connect dummy
 == 
 
 Error playing demo
@@ -604,10 +610,10 @@ Preparing demo playback
 Loading demo file from storage
 == 
 
-Why are you slowmo replaying to read this?
+Initializing components
 == 
 
-Initializing components
+Why are you slowmo replaying to read this?
 == 
 
 Initializing assets
@@ -671,6 +677,10 @@ Angle:
 == 
 
 Multi-View
+== 
+
+[Spectating]
+Following %s
 == 
 
 Server best:
@@ -778,7 +788,7 @@ Show DDNet map finishes in server browser
 transmits your player name to info.ddnet.org
 == 
 
-Trying to determine UDP connectivity...
+Trying to determine UDP connectivity…
 == 
 
 UDP seems to be filtered.
@@ -788,6 +798,9 @@ UDP and TCP IP addresses seem to be different. Try disabling VPN, proxy or netwo
 == 
 
 No answer from server yet.
+== 
+
+%d/%d KiB (%.1f KiB/s)
 == 
 
 Getting game info
@@ -806,6 +819,9 @@ Loading menu images
 == 
 
 Reset filter
+== 
+
+Example of usage
 == 
 
 Has people playing
@@ -1041,6 +1057,12 @@ Unable to delete the demo '%s'
 == 
 
 Unable to delete the folder '%s'. Make sure it's empty first.
+== 
+
+Dummy is not allowed on this server
+== 
+
+Please wait…
 == 
 
 Stop record
@@ -1426,6 +1448,9 @@ Map sound volume
 Background music volume
 == 
 
+Tee
+== 
+
 Controls
 == 
 
@@ -1468,10 +1493,7 @@ Show votes window after voting
 DDRace HUD
 == 
 
-Use DDRace Scoreboard
-== 
-
-Show client IDs in scoreboard
+Show client IDs (scoreboard, chat, spectator)
 == 
 
 Show DDRace HUD
@@ -1502,6 +1524,9 @@ Show names in chat in team colors
 == 
 
 Show only chat messages from friends
+== 
+
+Show only chat messages from team members
 == 
 
 Use old chat style
@@ -1711,9 +1736,6 @@ Regular background color
 Entities background color
 == 
 
-Reload
-== 
-
 Use current map as background
 == 
 
@@ -1736,6 +1758,39 @@ DDNet Client updated!
 == 
 
 No updates available
+== 
+
+Normal:
+== 
+
+Team:
+== 
+
+Dummy settings
+== 
+
+Toggle to edit your dummy settings
+== 
+
+Randomize
+== 
+
+Are you sure that you want to delete '%s'?
+== 
+
+Delete skin
+== 
+
+Basic
+== 
+
+Custom
+== 
+
+Unable to delete skin
+== 
+
+Customize
 == 
 
 Emoticons
@@ -1762,7 +1817,7 @@ Can't find a Tutorial server
 Server executable not found, can't run server
 == 
 
-Update failed! Check log...
+Update failed! Check log…
 == 
 
 Loading race demo files
@@ -1771,16 +1826,24 @@ Loading race demo files
 Time limit: %d min
 == 
 
-Round
+Round %d/%d
 == 
 
-Game over
+[Spectators]
+%d others…
 == 
 
 Score
 == 
 
 Super
+== 
+
+[Team and size]
+%d\n(%d/%d)
+== 
+
+Team %d (%d/%d)
 == 
 
 Manual
@@ -1795,16 +1858,19 @@ Auto
 Replay
 == 
 
-Draw!
+Red team wins!
 == 
 
 %s wins!
 == 
 
-Red team wins!
+Blue team wins!
 == 
 
-Blue team wins!
+Draw!
+== 
+
+Game over
 == 
 
 Loading sound files
@@ -1835,4 +1901,7 @@ Grabs
 == 
 
 Moved ingame
+== 
+
+https://wiki.ddnet.org/wiki/Mapping
 == 

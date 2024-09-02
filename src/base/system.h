@@ -222,7 +222,6 @@ enum
 	IOFLAG_READ = 1,
 	IOFLAG_WRITE = 2,
 	IOFLAG_APPEND = 4,
-	IOFLAG_SKIP_BOM = 8,
 
 	IOSEEK_START = 0,
 	IOSEEK_CUR = 1,
@@ -237,7 +236,7 @@ enum
  * @param File to open.
  * @param flags A set of IOFLAG flags.
  *
- * @sa IOFLAG_READ, IOFLAG_WRITE, IOFLAG_APPEND, IOFLAG_SKIP_BOM.
+ * @sa IOFLAG_READ, IOFLAG_WRITE, IOFLAG_APPEND.
  *
  * @return A handle to the file on success and 0 on failure.
  *
@@ -698,7 +697,7 @@ int64_t time_freq();
  *
  * @return The time as a UNIX timestamp
  */
-int time_timestamp();
+int64_t time_timestamp();
 
 /**
  * Retrieves the hours since midnight (0..23)
@@ -813,9 +812,11 @@ int net_addr_comp_noport(const NETADDR *a, const NETADDR *b);
  * @param max_length Maximum size of the string.
  * @param add_port add port to string or not
  *
+ * @return true on success
+ *
  * @remark The string will always be zero terminated
  */
-void net_addr_str(const NETADDR *addr, char *string, int max_length, int add_port);
+bool net_addr_str(const NETADDR *addr, char *string, int max_length, int add_port);
 
 /**
  * Turns url string into a network address struct.
@@ -1229,6 +1230,31 @@ int str_format_v(char *buffer, int buffer_size, const char *format, va_list args
 int str_format(char *buffer, int buffer_size, const char *format, ...)
 	GNUC_ATTRIBUTE((format(printf, 3, 4)));
 
+#if !defined(CONF_DEBUG)
+int str_format_int(char *buffer, size_t buffer_size, int value);
+
+template<typename... Args>
+int str_format_opt(char *buffer, int buffer_size, const char *format, Args... args)
+{
+	return str_format(buffer, buffer_size, format, args...);
+}
+
+template<>
+inline int str_format_opt(char *buffer, int buffer_size, const char *format, int val)
+{
+	if(strcmp(format, "%d") == 0)
+	{
+		return str_format_int(buffer, buffer_size, val);
+	}
+	else
+	{
+		return str_format(buffer, buffer_size, format, val);
+	}
+}
+
+#define str_format str_format_opt
+#endif
+
 /**
  * Trims specific number of words at the start of a string.
  *
@@ -1580,6 +1606,22 @@ const char *str_find_nocase(const char *haystack, const char *needle);
 		- The strings are treated as zero-terminated strings.
 */
 const char *str_find(const char *haystack, const char *needle);
+
+/**
+ * @ingroup Strings
+ *
+ * @param haystack String to search in
+ * @param delim String to search for
+ * @param offset Number of characters into the haystack
+ * @param start Will be set to the first delimiter on the left side of the offset (or haystack start)
+ * @param end Will be set to the first delimiter on the right side of the offset (or haystack end)
+ *
+ * @return `true` if both delimiters were found
+ * @return 'false' if a delimiter is missing (it uses haystack start and end as fallback)
+ *
+ * @remark The strings are treated as zero-terminated strings.
+ */
+bool str_delimiters_around_offset(const char *haystay, const char *delim, int offset, int *start, int *end);
 
 /**
  * Finds the last occurrence of a character
@@ -2098,14 +2140,6 @@ int64_t str_toint64_base(const char *str, int base = 10);
 float str_tofloat(const char *str);
 bool str_tofloat(const char *str, float *out);
 
-void str_from_int(int value, char *buffer, size_t buffer_size);
-
-template<size_t N>
-void str_from_int(int value, char (&dst)[N])
-{
-	str_from_int(value, dst, N);
-}
-
 /**
  * Determines whether a character is whitespace.
  *
@@ -2345,6 +2379,22 @@ int str_utf8_encode(char *ptr, int chr);
 int str_utf8_check(const char *str);
 
 /*
+	Function: str_utf8_copy_num
+		Copies a number of utf8 characters from one string to another.
+
+	Parameters:
+		dst - Pointer to a buffer that shall receive the string.
+		src - String to be copied.
+		dst_size - Size of the buffer dst.
+		num - maximum number of utf8 characters to be copied.
+
+	Remarks:
+		- The strings are treated as zero-terminated strings.
+		- Garantees that dst string will contain zero-termination.
+*/
+void str_utf8_copy_num(char *dst, const char *src, int dst_size, int num);
+
+/*
 	Function: str_utf8_stats
 		Determines the byte size and utf8 character count of a utf8 string.
 
@@ -2510,7 +2560,7 @@ typedef pid_t PROCESS;
  */
 constexpr PROCESS INVALID_PROCESS = 0;
 #endif
-
+#if !defined(CONF_PLATFORM_ANDROID)
 /**
  * Determines the initial window state when using @link shell_execute @endlink
  * to execute a process.
@@ -2582,11 +2632,11 @@ bool is_process_alive(PROCESS process);
 int open_link(const char *link);
 
 /**
- * Opens a file or directory with default program.
+ * Opens a file or directory with the default program.
  *
  * @ingroup Shell
  *
- * @param path The path to open.
+ * @param path The file or folder to open with the default program.
  *
  * @return `1` on success, `0` on failure.
  *
@@ -2594,6 +2644,7 @@ int open_link(const char *link);
  * @remark This may not be called with untrusted input or it'll result in arbitrary code execution, especially on Windows.
  */
 int open_file(const char *path);
+#endif // !defined(CONF_PLATFORM_ANDROID)
 
 /**
  * @defgroup Secure-Random
@@ -2620,7 +2671,7 @@ void generate_password(char *buffer, unsigned length, const unsigned short *rand
  *
  * @return `0` on success.
  */
-int secure_random_init();
+[[nodiscard]] int secure_random_init();
 
 /**
  * Uninitializes the secure random module.

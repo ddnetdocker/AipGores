@@ -72,8 +72,8 @@ Client
 Connecting to
 == T'estàs unint a
 
-Connection Problems...
-== Problemes de connexió...
+Connection Problems…
+== Problemes de connexió…
 
 Console
 == Consola
@@ -274,9 +274,6 @@ Player
 
 Player country:
 == País del jugador
-
-Player options
-== Opcions del jugador
 
 Players
 == Jugadors
@@ -506,9 +503,6 @@ Your skin
 Reset to defaults
 == Restaurar als valors predeterminats
 
-Round
-== Ronda
-
 Lht.
 == Lluminositat
 
@@ -647,8 +641,8 @@ Enable long pain sound (used when shooting in freeze)
 DDNet %s is available:
 == DDNet %s està disponible:
 
-Updating...
-== Actualitzant...
+Updating…
+== Actualitzant…
 
 Overlay entities
 == Entitats superposades
@@ -691,9 +685,6 @@ Max CSVs
 
 %.2f KiB
 == %.2f KiB
-
-Use DDRace Scoreboard
-== Utilitzar la taula d'estadístiques DDRace
 
 Best
 == Millor
@@ -788,9 +779,6 @@ Show DDNet map finishes in server browser
 transmits your player name to info.ddnet.org
 == retransmet el teu nom de jugar a info.ddnet.org
 
-Reload
-== Recarga
-
 Successfully saved the replay!
 == S'ha guardat la repetició correctament!
 
@@ -839,8 +827,8 @@ DDNet %s is out!
 Downloading %s:
 == Descarregant %s:
 
-Update failed! Check log...
-== L'actualització ha fallat! Mira el registre...
+Update failed! Check log…
+== L'actualització ha fallat! Mira el registre…
 
 Markers
 == Marques
@@ -1203,7 +1191,16 @@ Could not initialize the given graphics backend, reverting to the default backen
 Could not initialize the given graphics backend, this is probably because you didn't install the driver of the integrated graphics card.
 == 
 
+Could not resolve connect address '%s'. See local console for details.
+== 
+
+Connect address error
+== 
+
 Could not save downloaded map. Try manually deleting this file: %s
+== 
+
+Could not connect dummy
 == 
 
 Error playing demo
@@ -1230,10 +1227,10 @@ Loading map file from storage
 Loading demo file from storage
 == 
 
-Why are you slowmo replaying to read this?
+Initializing components
 == 
 
-Initializing components
+Why are you slowmo replaying to read this?
 == 
 
 Initializing assets
@@ -1296,6 +1293,10 @@ Angle:
 Multi-View
 == 
 
+[Spectating]
+Following %s
+== 
+
 Team %d
 == 
 
@@ -1353,7 +1354,7 @@ Videos directory
 Video was saved to '%s'
 == 
 
-Trying to determine UDP connectivity...
+Trying to determine UDP connectivity…
 == 
 
 UDP seems to be filtered.
@@ -1365,6 +1366,9 @@ UDP and TCP IP addresses seem to be different. Try disabling VPN, proxy or netwo
 No answer from server yet.
 == 
 
+%d/%d KiB (%.1f KiB/s)
+== 
+
 Getting game info
 == 
 
@@ -1372,6 +1376,9 @@ Requesting to join the game
 == 
 
 Loading menu images
+== 
+
+Example of usage
 == 
 
 No login required
@@ -1537,6 +1544,12 @@ Unable to delete the demo '%s'
 Unable to delete the folder '%s'. Make sure it's empty first.
 == 
 
+Dummy is not allowed on this server
+== 
+
+Please wait…
+== 
+
 Loading…
 == 
 
@@ -1644,6 +1657,9 @@ Allows maps to render with more detail
 Graphics card
 == 
 
+Tee
+== 
+
 Appearance
 == 
 
@@ -1665,7 +1681,7 @@ Show local time always
 DDRace HUD
 == 
 
-Show client IDs in scoreboard
+Show client IDs (scoreboard, chat, spectator)
 == 
 
 Show DDRace HUD
@@ -1693,6 +1709,9 @@ Opacity of freeze bars inside freeze
 == 
 
 Always show chat
+== 
+
+Show only chat messages from team members
 == 
 
 Chat font size
@@ -1818,6 +1837,39 @@ Entities background color
 Unregister protocol and file extensions
 == 
 
+Normal:
+== 
+
+Team:
+== 
+
+Dummy settings
+== 
+
+Toggle to edit your dummy settings
+== 
+
+Randomize
+== 
+
+Are you sure that you want to delete '%s'?
+== 
+
+Delete skin
+== 
+
+Basic
+== 
+
+Custom
+== 
+
+Unable to delete skin
+== 
+
+Customize
+== 
+
 Extras
 == 
 
@@ -1830,11 +1882,28 @@ Open the directory to add custom assets
 Loading race demo files
 == 
 
+Round %d/%d
+== 
+
+[Spectators]
+%d others…
+== 
+
 Super
+== 
+
+[Team and size]
+%d\n(%d/%d)
+== 
+
+Team %d (%d/%d)
 == 
 
 Loading sound files
 == 
 
 Moved ingame
+== 
+
+https://wiki.ddnet.org/wiki/Mapping
 == 

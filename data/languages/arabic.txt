@@ -71,8 +71,8 @@ Client
 Connecting to
 == ﻰﻟﺍ ﻝﺎﺼﺗﺍ
 
-Connection Problems...
-== ﻝﺎﺼﺗﻻﺍ ﻲﻓ ﻞﻛﺎﺸﻣ...
+Connection Problems…
+== ﻝﺎﺼﺗﻻﺍ ﻲﻓ ﻞﻛﺎﺸﻣ…
 
 Console
 == ﻞﺴﻧﻮﻜﻟﺍ
@@ -274,9 +274,6 @@ Player
 
 Player country:
 == ﺐﻋﻼﻟﺍ ﺪﻠﺑ:
-
-Player options
-== ﺐﻋﻼﻟﺍ ﺕﺍﺩﺍﺪﻋﺍ
 
 Players
 == ﻦﻴﺒﻋﻻ
@@ -494,9 +491,6 @@ Your skin
 Reset to defaults
 == ﺀﻲﺷ ﻞﻛ ﺓﺩﺎﻋﺍ
 
-Round
-== ﺔﻟﻮﺟ
-
 Lht.
 == ﺢﻴﺘﻔﺗ
 
@@ -608,8 +602,8 @@ Show other players' key presses
 System message
 == ﻡﺎﻈﻨﻟﺍ ﻞﺋﺎﺳﺭ
 
-Updating...
-== ...ﺚﻳﺪﺤﺘﻟﺍ ﺭﺎﺟ
+Updating…
+== …ﺚﻳﺪﺤﺘﻟﺍ ﺭﺎﺟ
 
 Overlay entities
 == ﻥﺍﺭﺪﺠﻟﺍ-ﺐﻛﺍﺮﺗ
@@ -619,9 +613,6 @@ Messages
 
 %.2f MiB
 == %.2f MiB
-
-Use DDRace Scoreboard
-== ﻝﺎﻤﻌﺘﺳﺃ DDRace ﺩﺭﻮﺑ ﺭﻮﻜﺳ
 
 Loading DDNet Client
 == ﻞﻴﻤﺤﺘﻟﺍ ﺭﺎﺟ DDNet Client
@@ -779,9 +770,6 @@ Skin prefix
 Show HUD
 == ﻞﻜﺸﻟﺍ ﺭﺎﻬﻇﺍ
 
-Reload
-== ﻞﻴﻤﺤﺘﻟﺍ ﺓﺩﺎﻋﺍ
-
 9+ new mentions
 == 9+ ﺓﺪﻳﺪﺟ ﺕﺍﺭﺎﻌﺷﺍ
 
@@ -845,8 +833,8 @@ Zoom in
 Disconnect Dummy
 == ﺔﻴﻣﺪﻟﺍ ﺝﺍﺮﺧﺍ
 
-Update failed! Check log...
-== ...ﺕﺎﻗﻮﻠﻟﺍ ﻦﻣ ﺪﻛﺎﺗ !ﻞﺸﻓ ﺚﻳﺪﺤﺘﻟﺍ
+Update failed! Check log…
+== …ﺕﺎﻗﻮﻠﻟﺍ ﻦﻣ ﺪﻛﺎﺗ !ﻞﺸﻓ ﺚﻳﺪﺤﺘﻟﺍ
 
 Markers
 == ﺕﺎﻣﻼﻌﻟﺍ
@@ -1032,9 +1020,6 @@ Debug mode enabled. Press Ctrl+Shift+D to disable debug mode.
 Existing Player
 == ﺩﻮﺟﻮﻣ ﺐﻋﻼﻟﺍ
 
-Your nickname '%s' is already used (%d points). Do you still want to use it?
-== ﻪﻣﺍﺪﺨﺘﺳﺍ ﺪﻳﺮﺗ ﺖﻟﺯﺎﻣ ﻞﻫ '%s' ﻞﻤﻌﺘﺴﻣ ﻚﻤﺳﺍ
-
 Checking for existing player with your name
 == ﻚﻤﺳﺎﺑ ﺐﻋﻻ ﺩﻮﺟﻭ ﻦﻣ ﻖﻘﺤﺘﻟﺍ
 
@@ -1098,7 +1083,16 @@ Could not initialize the given graphics backend, reverting to the default backen
 Could not initialize the given graphics backend, this is probably because you didn't install the driver of the integrated graphics card.
 == 
 
+Could not resolve connect address '%s'. See local console for details.
+== 
+
+Connect address error
+== 
+
 Could not save downloaded map. Try manually deleting this file: %s
+== 
+
+Could not connect dummy
 == 
 
 Error playing demo
@@ -1131,10 +1125,10 @@ Loading map file from storage
 Loading demo file from storage
 == 
 
-Why are you slowmo replaying to read this?
+Initializing components
 == 
 
-Initializing components
+Why are you slowmo replaying to read this?
 == 
 
 Initializing assets
@@ -1197,6 +1191,10 @@ Angle:
 Multi-View
 == 
 
+[Spectating]
+Following %s
+== 
+
 Team %d
 == 
 
@@ -1225,6 +1223,9 @@ Render complete
 == 
 
 Are you sure that you want to restart?
+== 
+
+Your nickname '%s' is already used (%d points). Do you still want to use it?
 == 
 
 There's an unsaved map in the editor, you might want to save it.
@@ -1260,7 +1261,7 @@ Join Tutorial Server
 Skip Tutorial
 == 
 
-Trying to determine UDP connectivity...
+Trying to determine UDP connectivity…
 == 
 
 UDP seems to be filtered.
@@ -1270,6 +1271,9 @@ UDP and TCP IP addresses seem to be different. Try disabling VPN, proxy or netwo
 == 
 
 No answer from server yet.
+== 
+
+%d/%d KiB (%.1f KiB/s)
 == 
 
 Getting game info
@@ -1303,6 +1307,9 @@ CHN
 == 
 
 Getting server list from master server
+== 
+
+Example of usage
 == 
 
 Are you sure that you want to disconnect and switch to a different server?
@@ -1474,6 +1481,12 @@ Unable to delete the demo '%s'
 Unable to delete the folder '%s'. Make sure it's empty first.
 == 
 
+Dummy is not allowed on this server
+== 
+
+Please wait…
+== 
+
 Loading…
 == 
 
@@ -1617,6 +1630,9 @@ Graphics card
 auto
 == 
 
+Tee
+== 
+
 Appearance
 == 
 
@@ -1638,7 +1654,7 @@ Show local time always
 DDRace HUD
 == 
 
-Show client IDs in scoreboard
+Show client IDs (scoreboard, chat, spectator)
 == 
 
 Show DDRace HUD
@@ -1666,6 +1682,9 @@ Opacity of freeze bars inside freeze
 == 
 
 Always show chat
+== 
+
+Show only chat messages from team members
 == 
 
 Chat font size
@@ -1809,6 +1828,39 @@ Unregister protocol and file extensions
 DDNet %s is available:
 == 
 
+Normal:
+== 
+
+Team:
+== 
+
+Dummy settings
+== 
+
+Toggle to edit your dummy settings
+== 
+
+Randomize
+== 
+
+Are you sure that you want to delete '%s'?
+== 
+
+Delete skin
+== 
+
+Basic
+== 
+
+Custom
+== 
+
+Unable to delete skin
+== 
+
+Customize
+== 
+
 Extras
 == 
 
@@ -1833,11 +1885,28 @@ Can't find a Tutorial server
 Loading race demo files
 == 
 
+Round %d/%d
+== 
+
+[Spectators]
+%d others…
+== 
+
 Super
+== 
+
+[Team and size]
+%d\n(%d/%d)
+== 
+
+Team %d (%d/%d)
 == 
 
 Loading sound files
 == 
 
 Moved ingame
+== 
+
+https://wiki.ddnet.org/wiki/Mapping
 == 

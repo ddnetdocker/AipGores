@@ -23,9 +23,12 @@
 
 #include <game/client/component.h>
 #include <game/client/components/mapimages.h>
+#include <game/client/lineinput.h>
 #include <game/client/render.h>
 #include <game/client/ui.h>
 #include <game/voting.h>
+
+#include <game/client/components/skins7.h>
 
 struct CServerProcess
 {
@@ -36,6 +39,7 @@ struct CServerProcess
 class CMenusKeyBinder : public CComponent
 {
 public:
+	const void *m_pKeyReaderId;
 	bool m_TakeKey;
 	bool m_GotKey;
 	IInput::CEvent m_Key;
@@ -169,6 +173,7 @@ protected:
 
 	bool m_JoinTutorial = false;
 	bool m_CreateDefaultFavoriteCommunities = false;
+	bool m_ForceRefreshLanPage = false;
 
 	char m_aNextServer[256];
 
@@ -184,8 +189,14 @@ protected:
 	const CMenuImage *FindMenuImage(const char *pName);
 
 	// loading
-	int m_LoadCurrent;
-	int m_LoadTotal;
+	class CLoadingState
+	{
+	public:
+		std::chrono::nanoseconds m_LastRender{0};
+		int m_Current;
+		int m_Total;
+	};
+	CLoadingState m_LoadingState;
 
 	//
 	char m_aMessageTopic[512];
@@ -235,6 +246,12 @@ protected:
 	bool m_NeedSendinfo;
 	bool m_NeedSendDummyinfo;
 	int m_SettingPlayerPage;
+
+	// 0.7 skins
+	int m_TeePartSelected = protocol7::SKINPART_BODY;
+	const CSkins7::CSkin *m_pSelectedSkin = nullptr;
+	CLineInputBuffered<protocol7::MAX_SKIN_ARRAY_SIZE, protocol7::MAX_SKIN_LENGTH> m_SkinNameInput;
+	void PopupConfirmDeleteSkin7();
 
 	// for map download popup
 	int64_t m_DownloadLastCheckTime;
@@ -402,8 +419,8 @@ protected:
 
 		bool operator<(const CFriendItem &Other) const
 		{
-			const int Result = str_comp(m_aName, Other.m_aName);
-			return Result < 0 || (Result == 0 && str_comp(m_aClan, Other.m_aClan) < 0);
+			const int Result = str_comp_nocase(m_aName, Other.m_aName);
+			return Result < 0 || (Result == 0 && str_comp_nocase(m_aClan, Other.m_aClan) < 0);
 		}
 	};
 
@@ -428,7 +445,6 @@ protected:
 	void RenderMenubar(CUIRect Box, IClient::EClientState ClientState);
 	void RenderNews(CUIRect MainView);
 	static void ConchainBackgroundEntities(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData);
-	void UpdateBackgroundEntities();
 	static void ConchainUpdateMusicState(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData);
 	void UpdateMusicState();
 
@@ -452,6 +468,8 @@ protected:
 
 	// found in menus_start.cpp
 	void RenderStartMenu(CUIRect MainView);
+	bool m_EditorHotkeyWasPressed = true;
+	float m_EditorHotKeyChecktime = 0.0f;
 
 	// found in menus_ingame.cpp
 	STextContainerIndex m_MotdTextContainerIndex;
@@ -576,12 +594,47 @@ protected:
 	void RenderSettingsPlayer(CUIRect MainView);
 	void RenderSettingsDummyPlayer(CUIRect MainView);
 	void RenderSettingsTee(CUIRect MainView);
+	void RenderSettingsTee7(CUIRect MainView);
+	void RenderSettingsTeeCustom7(CUIRect MainView);
+	void RenderSettingsTeeBasic7(CUIRect MainView);
+	void RenderSkinSelection7(CUIRect MainView);
+	void RenderSkinPartSelection7(CUIRect MainView);
 	void RenderSettingsControls(CUIRect MainView);
 	void ResetSettingsControls();
 	void RenderSettingsGraphics(CUIRect MainView);
 	void RenderSettingsSound(CUIRect MainView);
 	void RenderSettings(CUIRect MainView);
 	void RenderSettingsCustom(CUIRect MainView);
+
+	class CMapListItem
+	{
+	public:
+		char m_aFilename[IO_MAX_PATH_LENGTH];
+		bool m_IsDirectory;
+	};
+	class CPopupMapPickerContext
+	{
+	public:
+		std::vector<CMapListItem> m_vMaps;
+		char m_aCurrentMapFolder[IO_MAX_PATH_LENGTH] = "";
+		static int MapListFetchCallback(const CFsFileInfo *pInfo, int IsDir, int StorageType, void *pUser);
+		void MapListPopulate();
+		CMenus *m_pMenus;
+		int m_Selection;
+	};
+
+	static bool CompareFilenameAscending(const CMapListItem Lhs, const CMapListItem Rhs)
+	{
+		if(str_comp(Lhs.m_aFilename, "..") == 0)
+			return true;
+		if(str_comp(Rhs.m_aFilename, "..") == 0)
+			return false;
+		if(Lhs.m_IsDirectory != Rhs.m_IsDirectory)
+			return Lhs.m_IsDirectory;
+		return str_comp_filenames(Lhs.m_aFilename, Rhs.m_aFilename) < 0;
+	}
+
+	static CUi::EPopupMenuFunctionResult PopupMapPicker(void *pContext, CUIRect View, bool Active);
 
 	void SetNeedSendInfo();
 	void SetActive(bool Active);
@@ -715,6 +768,14 @@ public:
 		bool HasFile() const { return m_aFilename[0]; }
 	};
 
+	enum
+	{
+		GHOST_SORT_NONE = -1,
+		GHOST_SORT_NAME,
+		GHOST_SORT_TIME,
+		GHOST_SORT_DATE,
+	};
+
 	std::vector<CGhostItem> m_vGhosts;
 
 	std::chrono::nanoseconds m_GhostPopulateStartTime{0};
@@ -723,6 +784,7 @@ public:
 	CGhostItem *GetOwnGhost();
 	void UpdateOwnGhost(CGhostItem Item);
 	void DeleteGhostItem(int Index);
+	void SortGhostlist();
 
 	bool CanDisplayWarning() const;
 
@@ -749,6 +811,7 @@ public:
 		POPUP_QUIT,
 		POPUP_RESTART,
 		POPUP_WARNING,
+		POPUP_SAVE_SKIN,
 
 		// demo player states
 		DEMOPLAYER_NONE = 0,
@@ -767,7 +830,7 @@ private:
 	// found in menus_settings.cpp
 	void RenderSettingsDDNet(CUIRect MainView);
 	void RenderSettingsAppearance(CUIRect MainView);
-	ColorHSLA RenderHSLScrollbars(CUIRect *pRect, unsigned int *pColor, bool Alpha = false, bool ClampedLight = false);
+	bool RenderHslaScrollbars(CUIRect *pRect, unsigned int *pColor, bool Alpha, float DarkestLight);
 
 	CServerProcess m_ServerProcess;
 };

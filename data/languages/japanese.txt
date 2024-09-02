@@ -76,7 +76,7 @@ Client
 Connecting to
 == 接続先
 
-Connection Problems...
+Connection Problems…
 == 接続中に問題が発生
 
 Console
@@ -274,9 +274,6 @@ Player
 Player country:
 == 所在地:
 
-Player options
-== プレイヤー設定
-
 Players
 == プレーヤー
 
@@ -458,9 +455,6 @@ Max demos
 
 Internet
 == オンライン
-
-Round
-== ラウンド
 
 News
 == ニュース
@@ -687,9 +681,6 @@ Kill
 Pause
 == 観察
 
-Reload
-== 更新
-
 Deactivate
 == 無効にする
 
@@ -870,9 +861,6 @@ Assets
 DDNet Client needs to be restarted to complete update!
 == アップデートを完了するには、DDNet クライアントの再起動が必要です。
 
-Use DDRace Scoreboard
-== DDRace スゴアボードを使用
-
 Show score
 == スコアを表示
 
@@ -981,7 +969,7 @@ DDNet %s is available:
 Update now
 == 今すぐ更新
 
-Updating...
+Updating…
 == 更新中…
 
 DDNet Client updated!
@@ -1045,7 +1033,7 @@ DDNet %s is out!
 Downloading %s:
 == %s をダウンロード中:
 
-Update failed! Check log...
+Update failed! Check log…
 == 更新に失敗しました！ログを確認してください。
 
 Restart
@@ -1141,7 +1129,16 @@ Could not initialize the given graphics backend, reverting to the default backen
 Could not initialize the given graphics backend, this is probably because you didn't install the driver of the integrated graphics card.
 == 
 
+Could not resolve connect address '%s'. See local console for details.
+== 
+
+Connect address error
+== 
+
 Could not save downloaded map. Try manually deleting this file: %s
+== 
+
+Could not connect dummy
 == 
 
 Error playing demo
@@ -1171,10 +1168,10 @@ Loading map file from storage
 Loading demo file from storage
 == 
 
-Why are you slowmo replaying to read this?
+Initializing components
 == 
 
-Initializing components
+Why are you slowmo replaying to read this?
 == 
 
 Initializing assets
@@ -1235,6 +1232,10 @@ Angle:
 == 
 
 Multi-View
+== 
+
+[Spectating]
+Following %s
 == 
 
 Team %d
@@ -1300,7 +1301,7 @@ Join Tutorial Server
 Skip Tutorial
 == 
 
-Trying to determine UDP connectivity...
+Trying to determine UDP connectivity…
 == 
 
 UDP seems to be filtered.
@@ -1310,6 +1311,9 @@ UDP and TCP IP addresses seem to be different. Try disabling VPN, proxy or netwo
 == 
 
 No answer from server yet.
+== 
+
+%d/%d KiB (%.1f KiB/s)
 == 
 
 Getting game info
@@ -1340,6 +1344,9 @@ SA
 == 
 
 CHN
+== 
+
+Example of usage
 == 
 
 Are you sure that you want to disconnect and switch to a different server?
@@ -1508,6 +1515,12 @@ Unable to delete the demo '%s'
 Unable to delete the folder '%s'. Make sure it's empty first.
 == 
 
+Dummy is not allowed on this server
+== 
+
+Please wait…
+== 
+
 Loading…
 == 
 
@@ -1636,6 +1649,9 @@ Graphics card
 auto
 == 
 
+Tee
+== 
+
 Appearance
 == 
 
@@ -1657,7 +1673,7 @@ Show local time always
 DDRace HUD
 == 
 
-Show client IDs in scoreboard
+Show client IDs (scoreboard, chat, spectator)
 == 
 
 Show DDRace HUD
@@ -1685,6 +1701,9 @@ Opacity of freeze bars inside freeze
 == 
 
 Always show chat
+== 
+
+Show only chat messages from team members
 == 
 
 Chat font size
@@ -1819,6 +1838,39 @@ Chat command (e.g. showall 1)
 Unregister protocol and file extensions
 == 
 
+Normal:
+== 
+
+Team:
+== 
+
+Dummy settings
+== 
+
+Toggle to edit your dummy settings
+== 
+
+Randomize
+== 
+
+Are you sure that you want to delete '%s'?
+== 
+
+Delete skin
+== 
+
+Basic
+== 
+
+Custom
+== 
+
+Unable to delete skin
+== 
+
+Customize
+== 
+
 Extras
 == 
 
@@ -1837,11 +1889,28 @@ Can't find a Tutorial server
 Loading race demo files
 == 
 
+Round %d/%d
+== 
+
+[Spectators]
+%d others…
+== 
+
 Super
+== 
+
+[Team and size]
+%d\n(%d/%d)
+== 
+
+Team %d (%d/%d)
 == 
 
 Loading sound files
 == 
 
 Moved ingame
+== 
+
+https://wiki.ddnet.org/wiki/Mapping
 == 

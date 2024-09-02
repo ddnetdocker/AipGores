@@ -116,6 +116,7 @@ void CPlayer::Reset()
 
 	m_Paused = PAUSE_NONE;
 	m_DND = false;
+	m_Whispers = true;
 
 	m_LastPause = 0;
 	m_Score.reset();
@@ -143,6 +144,7 @@ void CPlayer::Reset()
 	m_VotedForPractice = false;
 	m_SwapTargetsClientId = -1;
 	m_BirthdayAnnounced = false;
+	m_RescueMode = RESCUEMODE_AUTO;
 }
 
 static int PlayerFlags_SixToSeven(int Flags)
@@ -183,7 +185,7 @@ void CPlayer::Tick()
 		GameServer()->SendChatTarget(m_ClientId, "Active moderator mode disabled because you are afk.");
 
 		if(!GameServer()->PlayerModerating())
-			GameServer()->SendChat(-1, CGameContext::CHAT_ALL, "Server kick/spec votes are no longer actively moderated.");
+			GameServer()->SendChat(-1, TEAM_ALL, "Server kick/spec votes are no longer actively moderated.");
 	}
 
 	// do latency stuff
@@ -213,7 +215,7 @@ void CPlayer::Tick()
 
 		char aBuf[512];
 		str_format(aBuf, sizeof(aBuf), "'%s' would have timed out, but can use timeout protection now", Server()->ClientName(m_ClientId));
-		GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+		GameServer()->SendChat(-1, TEAM_ALL, aBuf);
 		Server()->ResetNetErrorString(m_ClientId);
 	}
 
@@ -751,6 +753,11 @@ bool CPlayer::CanOverrideDefaultEmote() const
 	return m_LastEyeEmote == 0 || m_LastEyeEmote + (int64_t)g_Config.m_SvEyeEmoteChangeDelay * Server()->TickSpeed() < Server()->Tick();
 }
 
+bool CPlayer::CanSpec() const
+{
+	return m_pCharacter->IsGrounded() && m_pCharacter->m_Pos == m_pCharacter->m_PrevPos;
+}
+
 void CPlayer::ProcessPause()
 {
 	if(m_ForcePauseTime && m_ForcePauseTime < Server()->Tick())
@@ -759,7 +766,7 @@ void CPlayer::ProcessPause()
 		Pause(PAUSE_NONE, true);
 	}
 
-	if(m_Paused == PAUSE_SPEC && !m_pCharacter->IsPaused() && m_pCharacter->IsGrounded() && m_pCharacter->m_Pos == m_pCharacter->m_PrevPos)
+	if(m_Paused == PAUSE_SPEC && !m_pCharacter->IsPaused() && CanSpec())
 	{
 		m_pCharacter->Pause(true);
 		GameServer()->CreateDeath(m_pCharacter->m_Pos, m_ClientId, GameServer()->m_pController->GetMaskForPlayerWorldEvent(m_ClientId));
@@ -799,7 +806,7 @@ int CPlayer::Pause(int State, bool Force)
 			if(g_Config.m_SvPauseMessages)
 			{
 				str_format(aBuf, sizeof(aBuf), (State > PAUSE_NONE) ? "'%s' speced" : "'%s' resumed", Server()->ClientName(m_ClientId));
-				GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+				GameServer()->SendChat(-1, TEAM_ALL, aBuf);
 			}
 			break;
 		}
@@ -829,7 +836,7 @@ int CPlayer::ForcePause(int Time)
 	{
 		char aBuf[128];
 		str_format(aBuf, sizeof(aBuf), "'%s' was force-paused for %ds", Server()->ClientName(m_ClientId), Time);
-		GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf);
+		GameServer()->SendChat(-1, TEAM_ALL, aBuf);
 	}
 
 	return Pause(PAUSE_SPEC, true);
@@ -885,7 +892,7 @@ void CPlayer::ProcessScoreResult(CScorePlayerResult &Result)
 				if(GameServer()->ProcessSpamProtection(m_ClientId) && PrimaryMessage)
 					break;
 
-				GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aMessage, -1);
+				GameServer()->SendChat(-1, TEAM_ALL, aMessage, -1);
 				PrimaryMessage = false;
 			}
 			break;
@@ -918,18 +925,20 @@ void CPlayer::ProcessScoreResult(CScorePlayerResult &Result)
 			}
 			Server()->ExpireServerInfo();
 			int Birthday = Result.m_Data.m_Info.m_Birthday;
-			if(Birthday != 0 && !m_BirthdayAnnounced)
+			if(Birthday != 0 && !m_BirthdayAnnounced && GetCharacter())
 			{
 				char aBuf[512];
 				str_format(aBuf, sizeof(aBuf),
 					"Happy DDNet birthday to %s for finishing their first map %d year%s ago!",
 					Server()->ClientName(m_ClientId), Birthday, Birthday > 1 ? "s" : "");
-				GameServer()->SendChat(-1, CGameContext::CHAT_ALL, aBuf, m_ClientId);
+				GameServer()->SendChat(-1, TEAM_ALL, aBuf, m_ClientId);
 				str_format(aBuf, sizeof(aBuf),
 					"Happy DDNet birthday, %s!\nYou have finished your first map exactly %d year%s ago!",
 					Server()->ClientName(m_ClientId), Birthday, Birthday > 1 ? "s" : "");
 				GameServer()->SendBroadcast(aBuf, m_ClientId);
 				m_BirthdayAnnounced = true;
+
+				GameServer()->CreateBirthdayEffect(GetCharacter()->m_Pos, GetCharacter()->TeamMask());
 			}
 			GameServer()->SendRecord(m_ClientId);
 			break;

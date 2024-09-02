@@ -95,8 +95,8 @@ Colors of the hook collision line, in case of a possible collision with:
 Connecting to
 == Verbinden mit
 
-Connection Problems...
-== Verbindungsprobleme...
+Connection Problems…
+== Verbindungsprobleme…
 
 Console
 == Konsole
@@ -299,9 +299,6 @@ Player
 Player country:
 == Spielerland:
 
-Player options
-== Spieleroptionen
-
 Players
 == Spieler
 
@@ -364,9 +361,6 @@ Shotgun
 
 Show chat
 == Chat anzeigen
-
-Show client IDs in scoreboard
-== Client-IDs in der Punktetafel anzeigen
 
 Show DDRace HUD
 == DDRace-HUD anzeigen
@@ -530,9 +524,6 @@ Your skin
 Reset to defaults
 == Standardeinstellung
 
-Round
-== Runde
-
 Lht.
 == Hell.
 
@@ -650,8 +641,8 @@ System message
 DDNet %s is available:
 == DDNet %s verfügbar:
 
-Updating...
-== Aktualisieren...
+Updating…
+== Aktualisieren…
 
 Overlay entities
 == Overlay-Entitäten
@@ -661,9 +652,6 @@ Messages
 
 %.2f MiB
 == %.2f MiB
-
-Use DDRace Scoreboard
-== DDRace-Punktetafel benutzen
 
 Loading DDNet Client
 == DDNet-Client laden
@@ -821,9 +809,6 @@ Skin prefix
 Show HUD
 == HUD zeigen
 
-Reload
-== Neu laden
-
 9+ new mentions
 == 9+ Erwähnungen
 
@@ -899,8 +884,8 @@ Zoom in
 Disconnect Dummy
 == Dummy trennen
 
-Update failed! Check log...
-== Update fehlgeschlagen! Siehe log...
+Update failed! Check log…
+== Update fehlgeschlagen! Siehe log…
 
 Markers
 == Markierungen
@@ -1266,8 +1251,8 @@ Speed:
 Angle:
 == Winkel:
 
-Trying to determine UDP connectivity...
-== Versuche UDP-Verbindungsfähigkeit festzustellen...
+Trying to determine UDP connectivity…
+== Versuche UDP-Verbindungsfähigkeit festzustellen…
 
 UDP seems to be filtered.
 == UDP scheint gefiltert zu werden.
@@ -1862,3 +1847,87 @@ Always show own player's hook collision line
 
 Always show other players' hook collision lines
 == Immer Hakenkollisionslinie anderer Spieler anzeigen
+
+%d/%d KiB (%.1f KiB/s)
+== %d/%d KiB (%.1f KiB/s)
+
+Tee
+== Tee
+
+Show only chat messages from team members
+== Nur Nachrichten von Teammitgliedern anzeigen
+
+[Spectating]
+Following %s
+== %s folgen
+
+Example of usage
+== Beispielnutzung
+
+Round %d/%d
+== Runde %d/%d
+
+[Spectators]
+%d others…
+== %d andere…
+
+[Team and size]
+%d\n(%d/%d)
+== %d\n(%d/%d)
+
+Team %d (%d/%d)
+== Team %d (%d/%d)
+
+Could not resolve connect address '%s'. See local console for details.
+== Konnte Verbindungsadresse '%s' nicht auflösen, siehe lokale Konsole für Details.
+
+Connect address error
+== Fehler in Verbindungsadresse
+
+Could not connect dummy
+== Konnte Dummy nicht verbinden
+
+Dummy is not allowed on this server
+== Dummy ist auf diesem Server nicht erlaubt
+
+Please wait…
+== Bitte warten…
+
+Show client IDs (scoreboard, chat, spectator)
+== Client-IDs anzeigen (Punktetafel, Chat, Beobachter)
+
+Normal:
+== Normal:
+
+Team:
+== Team:
+
+Dummy settings
+== Dummy-Einstellungen
+
+Toggle to edit your dummy settings
+== Zu Dummy-Einstellungen wechseln
+
+Randomize
+== Randomisieren
+
+Are you sure that you want to delete '%s'?
+== Bist du sicher dass du '%s' löschen willst?
+
+Delete skin
+== Skin löschen
+
+Basic
+== Einfach
+
+Custom
+== Individuell
+
+Unable to delete skin
+== Kann Skin nicht löschen
+
+Customize
+== Anpassen
+
+https://wiki.ddnet.org/wiki/Mapping
+== 

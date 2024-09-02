@@ -79,8 +79,8 @@ Client
 Connecting to
 == Yhdistetään
 
-Connection Problems...
-== Yhteysongelmia...
+Connection Problems…
+== Yhteysongelmia…
 
 Console
 == Konsoli
@@ -279,9 +279,6 @@ Player
 
 Player country:
 == Pelaajan maa:
-
-Player options
-== Pelaajavalinnat
 
 Players
 == Pelaajat
@@ -499,9 +496,6 @@ Your skin
 Reset to defaults
 == Palaa oletusasetuksiin
 
-Round
-== Kierros
-
 Lht.
 == Valoisuus
 
@@ -712,9 +706,6 @@ Kill
 Pause
 == Pysäytä
 
-Reload
-== Päivitä
-
 Deactivate
 == Deaktivoi
 
@@ -859,9 +850,6 @@ DDNet
 DDNet Client needs to be restarted to complete update!
 == DDNet-asiakas täytyy käynnistää uudelleen latauksen viimeistelemiseksi
 
-Use DDRace Scoreboard
-== Käytä DDRacen tuloslistaa
-
 Show score
 == Näytä pistemäärä
 
@@ -955,8 +943,8 @@ DDNet %s is available:
 Update now
 == Päivitä nyt
 
-Updating...
-== Päivitetään...
+Updating…
+== Päivitetään…
 
 DDNet Client updated!
 == DDNet-asiakas on päivitetty!
@@ -1007,8 +995,8 @@ DDNet %s is out!
 Downloading %s:
 == Päivitetään %s:
 
-Update failed! Check log...
-== Päivitys epäonnistui! Katso loki...
+Update failed! Check log…
+== Päivitys epäonnistui! Katso loki…
 
 Restart
 == Uudelleenaloitus
@@ -1173,7 +1161,7 @@ Following
 == Seurataan
 
 Loading commands…
-== Ladataan komentoja...
+== Ladataan komentoja…
 
 Position:
 == Positio:
@@ -1203,13 +1191,13 @@ Loading menu themes
 == Ladataan valikon teemoja
 
 Press a key…
-== Paina näppäintä...
+== Paina näppäintä…
 
 Main menu
 == Päävalikko
 
-Trying to determine UDP connectivity...
-== Yritetään selvittää UDP-yhteyden toimivuutta...
+Trying to determine UDP connectivity…
+== Yritetään selvittää UDP-yhteyden toimivuutta…
 
 UDP seems to be filtered.
 == UDP näyttää olevan suodatettu.
@@ -1435,7 +1423,7 @@ Unable to delete the folder '%s'. Make sure it's empty first.
 == Ei voitu poistaa kansiota '%s'. Varmista että se on tyhjä ensin.
 
 Loading…
-== Ladataan...
+== Ladataan…
 
 Loading ghost files
 == Ladataan aave-tiedostoja
@@ -1502,9 +1490,6 @@ No login required
 
 Player info change cooldown
 == Pelaajan tiedon muutos viive
-
-Converse
-== 
 
 Always show chat
 == Aina näytä chatti
@@ -1643,9 +1628,6 @@ Show local time always
 DDRace HUD
 == DDrace-HUD
 
-Show client IDs in scoreboard
-== Näytä asiakas-ID:t pistetaulukossa
-
 Show DDRace HUD
 == Näytä DDRace-HUD
 
@@ -1675,9 +1657,6 @@ Chat font size
 
 Chat width
 == Chatin leveys
-
-Show hook strength indicator
-== Näytä koukun voimakkuus mittari
 
 Show local player's key presses
 == Näytä paikallisen pelaajan näppäimistönpainallukset
@@ -1841,11 +1820,98 @@ Auto
 Loading sound files
 == Ladataan ääni tiedostoja
 
+Moved ingame
+== Liikui pelissä
+
+Could not resolve connect address '%s'. See local console for details.
+== 
+
+Connect address error
+== 
+
+Could not connect dummy
+== 
+
+[Spectating]
+Following %s
+== 
+
+%d/%d KiB (%.1f KiB/s)
+== 
+
+Example of usage
+== 
+
+Dummy is not allowed on this server
+== 
+
+Please wait…
+== 
+
+Converse
+== 
+
+Tee
+== 
+
+Show client IDs (scoreboard, chat, spectator)
+== 
+
+Show only chat messages from team members
+== 
+
+Normal:
+== 
+
+Team:
+== 
+
+Dummy settings
+== 
+
+Toggle to edit your dummy settings
+== 
+
+Randomize
+== 
+
+Are you sure that you want to delete '%s'?
+== 
+
+Delete skin
+== 
+
+Basic
+== 
+
+Custom
+== 
+
+Unable to delete skin
+== 
+
+Customize
+== 
+
+Round %d/%d
+== 
+
+[Spectators]
+%d others…
+== 
+
+[Team and size]
+%d\n(%d/%d)
+== 
+
+Team %d (%d/%d)
+== 
+
 Spree
 == 
 
 Grabs
 == 
 
-Moved ingame
-== Liikui pelissä
+https://wiki.ddnet.org/wiki/Mapping
+== 

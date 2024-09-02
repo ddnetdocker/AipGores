@@ -7,7 +7,7 @@
 #	3edcxzaq1		2020-06-25 00:00:00
 #	cur.ie			2020-09-28 00:00:00
 #	simpygirl		2022-02-20 00:00:00
-#	furo			2024-04-20 00:00:00
+#	furo			2024-08-29 00:00:00
 ##### /authors #####
 
 ##### translated strings #####
@@ -81,8 +81,8 @@ Client
 Connecting to
 == Ansluter till
 
-Connection Problems...
-== Anslutningsproblem...
+Connection Problems…
+== Anslutningsproblem…
 
 Console
 == Konsol
@@ -281,9 +281,6 @@ Player
 
 Player country:
 == Land
-
-Player options
-== Spelaralternativ
 
 Players
 == Spelare
@@ -501,9 +498,6 @@ Your skin
 Reset to defaults
 == Nollställ till standard
 
-Round
-== Runda
-
 Lht.
 == Ljusstyrka
 
@@ -687,8 +681,8 @@ Max CSVs
 Zoom in
 == Zooma in
 
-Update failed! Check log...
-== Updatering misslyckades! Kolla logg...
+Update failed! Check log…
+== Updatering misslyckades! Kolla logg…
 
 %d new mentions
 == %d nya nämningar
@@ -846,8 +840,8 @@ AntiPing: predict grenade paths
 Best
 == Bäst
 
-Updating...
-== Uppdaterar...
+Updating…
+== Uppdaterar…
 
 Clan plates size
 == Klanskylt storlek
@@ -866,9 +860,6 @@ DDNet %s is out!
 
 Highlighted message
 == Betona meddelande
-
-Use DDRace Scoreboard
-== Använd DDRace poänglista
 
 AntiPing: predict weapons
 == AntiPing: predicera vapen
@@ -905,9 +896,6 @@ Show HUD
 
 Pause
 == Pausa
-
-Reload
-== Ladda om
 
 Spree
 == Spree
@@ -1240,8 +1228,8 @@ Team %d
 Uploading map data to GPU
 == Laddar upp bana data till grafikkortet
 
-Trying to determine UDP connectivity...
-== Försöker att bestämma UDP anslutning...
+Trying to determine UDP connectivity…
+== Försöker att bestämma UDP anslutning…
 
 UDP seems to be filtered.
 == UDP verkar vara filtrerad.
@@ -1521,9 +1509,6 @@ Show health, shields and ammo
 
 DDRace HUD
 == DDRace HUD
-
-Show client IDs in scoreboard
-== Visa klient ID i poänglista
 
 Show DDRace HUD
 == Visa DDRace HUD
@@ -1848,3 +1833,87 @@ Always show own player's hook collision line
 
 Always show other players' hook collision lines
 == Visa alltid andra spelares hook kollisions linjer
+
+%d/%d KiB (%.1f KiB/s)
+== %d/%d KiB (%.1f KiB/s)
+
+Tee
+== Tee
+
+Show only chat messages from team members
+== Visa bara chattmeddelanden från lagkamrater
+
+[Spectating]
+Following %s
+== Följer %s
+
+Example of usage
+== Exempel på användning
+
+Round %d/%d
+== Runda %d/%d
+
+[Spectators]
+%d others…
+== %d andra…
+
+[Team and size]
+%d\n(%d/%d)
+== %d\n(%d/%d)
+
+Team %d (%d/%d)
+== Lag %d (%d/%d)
+
+https://wiki.ddnet.org/wiki/Mapping
+== https://wiki.ddnet.org/wiki/Mapping
+
+Could not resolve connect address '%s'. See local console for details.
+== Kunde inte förstå anslutnings adress '%s'. Se den lokala konsolen för detaljer.
+
+Connect address error
+== Anslutnings problem
+
+Could not connect dummy
+== Kunde inte ansluta dummy
+
+Dummy is not allowed on this server
+== Dummy är inte tillåten på denna server
+
+Please wait…
+== Vänligen vänta…
+
+Show client IDs (scoreboard, chat, spectator)
+== Visa klient IDen (poänglistan, chatt, åskadarmeny)
+
+Normal:
+== Normal:
+
+Team:
+== Lag:
+
+Dummy settings
+== Dummy inställningar
+
+Toggle to edit your dummy settings
+== Växla för att ändra dina dummy inställningar
+
+Randomize
+== Slumpa
+
+Are you sure that you want to delete '%s'?
+== Är du säker att du vill ta bort '%s'?
+
+Delete skin
+== Ta bort skin
+
+Basic
+== Enkel
+
+Custom
+== Anpassa
+
+Unable to delete skin
+== Kunde inte ta bort skin
+
+Customize
+== Ändra

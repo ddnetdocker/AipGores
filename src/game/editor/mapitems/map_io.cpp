@@ -111,27 +111,8 @@ bool CEditorMap::Save(const char *pFileName)
 		}
 		else
 		{
-			const size_t PixelSize = CImageInfo::PixelSize(CImageInfo::FORMAT_RGBA);
-			const size_t DataSize = (size_t)Item.m_Width * Item.m_Height * PixelSize;
-			if(pImg->m_Format == CImageInfo::FORMAT_RGB)
-			{
-				// Convert to RGBA
-				unsigned char *pDataRGBA = (unsigned char *)malloc(DataSize);
-				unsigned char *pDataRGB = (unsigned char *)pImg->m_pData;
-				for(int j = 0; j < Item.m_Width * Item.m_Height; j++)
-				{
-					pDataRGBA[j * PixelSize] = pDataRGB[j * 3];
-					pDataRGBA[j * PixelSize + 1] = pDataRGB[j * 3 + 1];
-					pDataRGBA[j * PixelSize + 2] = pDataRGB[j * 3 + 2];
-					pDataRGBA[j * PixelSize + 3] = 255;
-				}
-				Item.m_ImageData = Writer.AddData(DataSize, pDataRGBA);
-				free(pDataRGBA);
-			}
-			else
-			{
-				Item.m_ImageData = Writer.AddData(DataSize, pImg->m_pData);
-			}
+			dbg_assert(pImg->m_Format == CImageInfo::FORMAT_RGBA, "Embedded images must be in RGBA format");
+			Item.m_ImageData = Writer.AddData(pImg->DataSize(), pImg->m_pData);
 		}
 		Writer.AddItem(MAPITEMTYPE_IMAGE, i, sizeof(Item), &Item);
 	}
@@ -508,8 +489,14 @@ bool CEditorMap::Load(const char *pFileName, int StorageType, const std::functio
 			else
 				str_copy(pImg->m_aName, pName);
 
-			const CImageInfo::EImageFormat Format = pItem->m_Version < CMapItemImage_v2::CURRENT_VERSION ? CImageInfo::FORMAT_RGBA : CImageInfo::ImageFormatFromInt(pItem->m_Format);
-			if(pImg->m_External || (Format != CImageInfo::FORMAT_RGB && Format != CImageInfo::FORMAT_RGBA))
+			if(pItem->m_Version > 1 && pItem->m_MustBe1 != 1)
+			{
+				char aBuf[128];
+				str_format(aBuf, sizeof(aBuf), "Error: Unsupported image type of image %d '%s'.", i, pImg->m_aName);
+				ErrorHandler(aBuf);
+			}
+
+			if(pImg->m_External || (pItem->m_Version > 1 && pItem->m_MustBe1 != 1))
 			{
 				char aBuf[IO_MAX_PATH_LENGTH];
 				str_format(aBuf, sizeof(aBuf), "mapres/%s.png", pImg->m_aName);
@@ -534,7 +521,7 @@ bool CEditorMap::Load(const char *pFileName, int StorageType, const std::functio
 			{
 				pImg->m_Width = pItem->m_Width;
 				pImg->m_Height = pItem->m_Height;
-				pImg->m_Format = Format;
+				pImg->m_Format = CImageInfo::FORMAT_RGBA;
 
 				// copy image data
 				void *pData = DataFile.GetData(pItem->m_ImageData);

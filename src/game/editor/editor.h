@@ -11,6 +11,7 @@
 #include <game/client/ui_listbox.h>
 #include <game/mapitems.h>
 
+#include <game/editor/enums.h>
 #include <game/editor/mapitems/envelope.h>
 #include <game/editor/mapitems/layer.h>
 #include <game/editor/mapitems/layer_front.h>
@@ -31,7 +32,6 @@
 #include <engine/shared/datafile.h>
 #include <engine/shared/jobs.h>
 
-#include "auto_map.h"
 #include "editor_history.h"
 #include "editor_server_settings.h"
 #include "editor_trackers.h"
@@ -39,6 +39,8 @@
 #include "layer_selector.h"
 #include "map_view.h"
 #include "smooth_value.h"
+#include <game/editor/prompt.h>
+#include <game/editor/quick_action.h>
 
 #include <deque>
 #include <functional>
@@ -61,7 +63,8 @@ enum
 
 	DIALOG_NONE = 0,
 	DIALOG_FILE,
-	DIALOG_MAPSETTINGS_ERROR
+	DIALOG_MAPSETTINGS_ERROR,
+	DIALOG_QUICK_PROMPT,
 };
 
 class CEditorImage;
@@ -279,6 +282,7 @@ class CEditor : public IEditor
 	std::vector<std::reference_wrapper<CEditorComponent>> m_vComponents;
 	CMapView m_MapView;
 	CLayerSelector m_LayerSelector;
+	CPrompt m_Prompt;
 
 	bool m_EditorWasUsedBefore = false;
 
@@ -320,7 +324,20 @@ public:
 	const CMapView *MapView() const { return &m_MapView; }
 	CLayerSelector *LayerSelector() { return &m_LayerSelector; }
 
+	void FillGameTiles(EGameTileOp FillTile) const;
+	bool CanFillGameTiles() const;
+	void AddGroup();
+	void AddTileLayer();
+	void LayerSelectImage();
+	bool IsNonGameTileLayerSelected() const;
+#define REGISTER_QUICK_ACTION(name, text, callback, disabled, active, button_color, description) CQuickAction m_QuickAction##name;
+#include <game/editor/quick_actions.h>
+#undef REGISTER_QUICK_ACTION
+
 	CEditor() :
+#define REGISTER_QUICK_ACTION(name, text, callback, disabled, active, button_color, description) m_QuickAction##name(text, description, callback, disabled, active, button_color),
+#include <game/editor/quick_actions.h>
+#undef REGISTER_QUICK_ACTION
 		m_ZoomEnvelopeX(1.0f, 0.1f, 600.0f),
 		m_ZoomEnvelopeY(640.0f, 0.1f, 32000.0f),
 		m_MapSettingsCommandContext(m_MapSettingsBackend.NewContext(&m_SettingsCommandInput))
@@ -370,10 +387,6 @@ public:
 		m_OffsetEnvelopeY = 0.5f;
 
 		m_ShowMousePointer = true;
-		m_MouseDeltaX = 0;
-		m_MouseDeltaY = 0;
-		m_MouseDeltaWx = 0;
-		m_MouseDeltaWy = 0;
 
 		m_GuiActive = true;
 		m_PreviewZoom = false;
@@ -406,8 +419,8 @@ public:
 
 		m_CheckerTexture.Invalidate();
 		m_BackgroundTexture.Invalidate();
-		for(int i = 0; i < NUM_CURSORS; i++)
-			m_aCursorTextures[i].Invalidate();
+		for(auto &CursorTexture : m_aCursorTextures)
+			CursorTexture.Invalidate();
 
 		m_CursorType = CURSOR_NORMAL;
 
@@ -464,8 +477,7 @@ public:
 	void ResetIngameMoved() override { m_IngameMoved = false; }
 
 	void HandleCursorMovement();
-	void OnMouseMove(float MouseX, float MouseY);
-	void DispatchInputEvents();
+	void OnMouseMove(vec2 MousePos);
 	void HandleAutosave();
 	bool PerformAutosave();
 	void HandleWriterFinishJobs();
@@ -616,7 +628,8 @@ public:
 	IGraphics::CTextureHandle m_FilePreviewImage;
 	int m_FilePreviewSound;
 	EPreviewState m_FilePreviewState;
-	CImageInfo m_FilePreviewImageInfo;
+	int m_FilePreviewImageWidth;
+	int m_FilePreviewImageHeight;
 	bool m_FileDialogOpening;
 
 	int m_ToolbarPreviewSound;
@@ -706,17 +719,10 @@ public:
 
 	char m_aMenuBackgroundTooltip[256];
 	bool m_PreviewZoom;
-	float m_MouseWScale = 1.0f; // Mouse (i.e. UI) scale relative to the World (selected Group)
-	float m_MouseX = 0.0f;
-	float m_MouseY = 0.0f;
-	float m_MouseWorldX = 0.0f;
-	float m_MouseWorldY = 0.0f;
-	float m_MouseWorldNoParaX = 0.0f;
-	float m_MouseWorldNoParaY = 0.0f;
-	float m_MouseDeltaX;
-	float m_MouseDeltaY;
-	float m_MouseDeltaWx;
-	float m_MouseDeltaWy;
+	float m_MouseWorldScale = 1.0f; // Mouse (i.e. UI) scale relative to the World (selected Group)
+	vec2 m_MouseWorldPos = vec2(0.0f, 0.0f);
+	vec2 m_MouseWorldNoParaPos = vec2(0.0f, 0.0f);
+	vec2 m_MouseDeltaWorld = vec2(0.0f, 0.0f);
 	const void *m_pContainerPanned;
 	const void *m_pContainerPannedLast;
 	char m_MapEditorId; // UI element ID for the main map editor
@@ -845,7 +851,7 @@ public:
 
 	void RenderBackground(CUIRect View, IGraphics::CTextureHandle Texture, float Size, float Brightness) const;
 
-	SEditResult<int> UiDoValueSelector(void *pId, CUIRect *pRect, const char *pLabel, int Current, int Min, int Max, int Step, float Scale, const char *pToolTip, bool IsDegree = false, bool IsHex = false, int corners = IGraphics::CORNER_ALL, const ColorRGBA *pColor = nullptr, bool ShowValue = true);
+	SEditResult<int> UiDoValueSelector(void *pId, CUIRect *pRect, const char *pLabel, int Current, int Min, int Max, int Step, float Scale, const char *pToolTip, bool IsDegree = false, bool IsHex = false, int Corners = IGraphics::CORNER_ALL, const ColorRGBA *pColor = nullptr, bool ShowValue = true);
 
 	static CUi::EPopupMenuFunctionResult PopupMenuFile(void *pContext, CUIRect View, bool Active);
 	static CUi::EPopupMenuFunctionResult PopupMenuTools(void *pContext, CUIRect View, bool Active);
@@ -1015,7 +1021,7 @@ public:
 	void SelectGameLayer();
 	std::vector<int> SortImages();
 
-	void DoAudioPreview(CUIRect View, const void *pPlayPauseButtonId, const void *pStopButtonId, const void *pSeekBarId, const int SampleId);
+	void DoAudioPreview(CUIRect View, const void *pPlayPauseButtonId, const void *pStopButtonId, const void *pSeekBarId, int SampleId);
 
 	// Tile Numbers For Explanations - TODO: Add/Improve tiles and explanations
 	enum
@@ -1139,7 +1145,6 @@ public:
 	int FindNextFreeSwitchNumber();
 	int FindNextFreeTeleNumber(bool IsCheckpoint = false);
 
-public:
 	// Undo/Redo
 	CEditorHistory m_EditorHistory;
 	CEditorHistory m_ServerSettingsHistory;
@@ -1151,7 +1156,6 @@ private:
 	void UndoLastAction();
 	void RedoLastAction();
 
-private:
 	std::map<int, CPoint[5]> m_QuadDragOriginalPoints;
 };
 
