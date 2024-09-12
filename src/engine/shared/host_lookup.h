@@ -14,6 +14,7 @@ private:
 	char m_aHostname[128];
 	int m_Nettype;
 	NETADDR m_Addr;
+	char m_aReason[128];
 
 	void Run() override;
 
@@ -25,6 +26,7 @@ public:
 	const char *Hostname() const { return m_aHostname; }
 	int Nettype() const { return m_Nettype; }
 	NETADDR Addr() const { return m_Addr; }
+	const char *Reason() const { return m_aReason; }
 };
 
 #endif
