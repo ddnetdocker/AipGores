@@ -56,7 +56,11 @@ while IFS='=' read -r key value; do
     # Suche nach der entsprechenden Zeile in der Datei und lösche sie (falls sie existiert)
     sed -i "/$setting/d" server.cfg
     # Füge die ENV-Variable im gewünschten Format am Anfang der Datei ein
-    echo "$setting $formatted_value" | cat - server.cfg > temp && mv temp server.cfg
+    if [[ "$formatted_value" == *" "* ]]; then
+        echo "$setting \"$formatted_value\"" | cat - server.cfg > temp && mv temp server.cfg
+    else
+        echo "$setting $formatted_value" | cat - server.cfg > temp && mv temp server.cfg
+    fi
 done < <(env | grep '^TW_')
 
 # add start comment to server.cfg

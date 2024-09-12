@@ -1,5 +1,5 @@
 # Docker image to build DDNet for Linux and run it in a container
-FROM debian:12 as builder
+FROM debian:12 AS builder
 
 ENV CARGO_NET_GIT_FETCH_WITH_CLI=true
 
@@ -40,7 +40,7 @@ RUN mkdir build && cd build && \
         make -j$(nproc) DDNet-Server
 
 
-FROM debian:12 as release
+FROM debian:12 AS release
 
 ENV CARGO_NET_GIT_FETCH_WITH_CLI=true
 
