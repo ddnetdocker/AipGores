@@ -540,7 +540,7 @@ bool CScoreWorker::SaveScore(IDbConnection *pSqlServer, const ISqlData *pGameDat
 			return true;
 		}
 		int NumFinished = true; //pSqlServer->GetInt(1);
-		if(NumFinished == 0)
+		if(NumFinished) 		// == 0)
 		{
 			str_format(aBuf, sizeof(aBuf), "SELECT Points FROM %s_maps WHERE Map=?", pSqlServer->GetPrefix());
 			if(pSqlServer->PrepareStatement(aBuf, pError, ErrorSize))
