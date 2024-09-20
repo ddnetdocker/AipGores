@@ -1,6 +1,9 @@
 name: Build and Push Docker Images Both Repositories
 
 on:
+  # push:
+  #   branches:
+  #     - main
   workflow_dispatch:
 
 jobs:
@@ -17,6 +20,6 @@ jobs:
 
       - name: Login, Tag and push Docker images to Docker Hub
         run: |
-            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-            docker tag ddnet /ddnet
-            docker push /ddnet
+            echo ${{ secrets.DOCKER_PASSWORD }} | docker login --username ${{ secrets.DOCKER_USERNAME }} --password-stdin
+            docker tag ${{ secrets.DOCKER_PASSWORD }}/ddnet ddnet
+            docker push ${{ secrets.DOCKER_PASSWORD }}/ddnet
