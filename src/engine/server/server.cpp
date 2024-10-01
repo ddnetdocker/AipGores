@@ -45,6 +45,7 @@
 #include "databases/connection.h"
 #include "databases/connection_pool.h"
 #include "register.h"
+#include <curl/curl.h>
 
 extern bool IsInterrupted();
 
@@ -1098,31 +1099,49 @@ int CServer::NewClientCallback(int ClientId, void *pUser, bool Sixup)
 	return 0;
 }
 
+#include <curl/curl.h>
+
+// ...
+
 void CServer::InitDnsbl(int ClientId)
 {
 	NETADDR Addr = *m_NetServer.ClientAddr(ClientId);
 	const char *pName = ClientName(ClientId);
 
-	//TODO: support ipv6
+	// TODO: support ipv6
 	if(Addr.type != NETTYPE_IPV4)
 		return;
 
-	// build dnsbl host lookup
-	char aBuf[256];
-	if(Config()->m_SvDnsblKey[0] == '\0')
+	// Initialize curl for URL escaping
+	CURL *curl = curl_easy_init();
+	if(curl)
 	{
-		// without key
-		str_format(aBuf, sizeof(aBuf), "%s?ip=%d.%d.%d.%d&name=%s", Config()->m_SvDnsblHost, Addr.ip[0], Addr.ip[1], Addr.ip[2], Addr.ip[3], pName);	}
-	else
-	{
-		// with key
-		str_format(aBuf, sizeof(aBuf), "%s?ip=%d.%d.%d.%d&name=%s&key=%s", Config()->m_SvDnsblHost, Addr.ip[0], Addr.ip[1], Addr.ip[2], Addr.ip[3], pName, Config()->m_SvDnsblKey);
-	}
+		// Escape the client name
+		char *escapedName = curl_easy_escape(curl, pName, 0);
 
-	m_aClients[ClientId].m_pDnsblLookup = std::make_shared<CHostLookup>(aBuf, NETTYPE_IPV4);
-	Engine()->AddJob(m_aClients[ClientId].m_pDnsblLookup);
-	m_aClients[ClientId].m_DnsblState = CClient::DNSBL_STATE_PENDING;
+		// build dnsbl host lookup
+		char aBuf[256];
+		if(Config()->m_SvDnsblKey[0] == '\0')
+		{
+			// without key
+			str_format(aBuf, sizeof(aBuf), "%s?ip=%d.%d.%d.%d&name=%s", Config()->m_SvDnsblHost, Addr.ip[0], Addr.ip[1], Addr.ip[2], Addr.ip[3], escapedName);
+		}
+		else
+		{
+			// with key
+			str_format(aBuf, sizeof(aBuf), "%s?ip=%d.%d.%d.%d&name=%s&key=%s", Config()->m_SvDnsblHost, Addr.ip[0], Addr.ip[1], Addr.ip[2], Addr.ip[3], escapedName, Config()->m_SvDnsblKey);
+		}
+
+		// Cleanup the escaped name
+		curl_free(escapedName);
+		curl_easy_cleanup(curl);
+
+		m_aClients[ClientId].m_pDnsblLookup = std::make_shared<CHostLookup>(aBuf, NETTYPE_IPV4);
+		Engine()->AddJob(m_aClients[ClientId].m_pDnsblLookup);
+		m_aClients[ClientId].m_DnsblState = CClient::DNSBL_STATE_PENDING;
+	}
 }
+
 
 #ifdef CONF_FAMILY_UNIX
 void CServer::SendConnLoggingCommand(CONN_LOGGING_CMD Cmd, const NETADDR *pAddr)
