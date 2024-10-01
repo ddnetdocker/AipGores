@@ -19,6 +19,7 @@ CHostLookup::CHostLookup() = default;
 
 CHostLookup::CHostLookup(const char *pHostname, int Nettype)
 {
+	str_copy(m_aReason, "Unknown", sizeof(m_aReason));
 	str_copy(m_aHostname, pHostname);
 	m_Nettype = Nettype;
 	Abortable(true);
@@ -35,6 +36,8 @@ void CHostLookup::Run()
 
 	if(curl)
 	{
+		m_Result = 0;
+		str_copy(m_aReason, "Unknown", sizeof(m_aReason));
 		// Set the URL
 		const char *url = m_aHostname;
 		curl_easy_setopt(curl, CURLOPT_URL, url);
@@ -50,7 +53,7 @@ void CHostLookup::Run()
 		// Check for errors
 		if(res != CURLE_OK) {
 			dbg_msg("host_lookup", "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-			m_Result = 0;
+			return;
 		} else {
 			json_value *pJson = json_parse(response.c_str(), response.length());
 			if(pJson->type != json_object)
@@ -67,21 +70,18 @@ void CHostLookup::Run()
 			if (state.type != json_string)
 			{
 				json_value_free(pJson);
-				m_Result = 0;
 				dbg_msg("host_lookup", "invalid JSON response from host_lookup (state)");
 				return;
 			}
 			if (isBan.type != json_boolean)
 			{
 				json_value_free(pJson);
-				m_Result = 0;
 				dbg_msg("host_lookup", "invalid JSON response from host_lookup (isBan)");
 				return;
 			}
 			if (reason.type != json_string)
 			{
 				json_value_free(pJson);
-				m_Result = 0;
 				dbg_msg("host_lookup", "invalid JSON response from host_lookup (reason)");
 				return;
 			}
@@ -104,6 +104,10 @@ void CHostLookup::Run()
 			else if (str_comp_nocase(state.u.string.ptr, "error") == 0)
 			{
 				str_copy(m_aReason, "Error occurred", sizeof(m_aReason));
+			}
+			else
+			{
+				str_copy(m_aReason, "Unknown", sizeof(m_aReason));
 			}
 			dbg_msg("host_lookup", "request <%s> returned <%d> <%s>", m_aHostname, m_Result, m_aReason);
 
